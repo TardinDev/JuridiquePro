@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, Mail, Phone, MapPin, Scale, ShieldCheck, FileText, Briefcase, Users, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
@@ -28,6 +29,40 @@ const HERO_SLIDES = [
   },
 ]
 
+const slideIn = (
+  direction: "left" | "right" | "top" | "bottom",
+  delay: number,
+  duration = 0.9
+) => {
+  const axis = direction === "left" || direction === "right" ? "x" : "y"
+  const value =
+    direction === "left" ? -70 :
+    direction === "right" ? 70 :
+    direction === "top" ? -40 : 40
+
+  return {
+    initial: { [axis]: value, opacity: 0 },
+    animate: { [axis]: 0, opacity: 1 },
+    transition: {
+      duration,
+      delay,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  }
+}
+
+const scaleIn = (delay: number, duration = 0.8) => ({
+  initial: { scale: 0.6, opacity: 0 },
+  animate: { scale: 1, opacity: 1 },
+  transition: { duration, delay, ease: [0.22, 1, 0.36, 1] },
+})
+
+const lineReveal = (delay: number) => ({
+  initial: { scaleX: 0, originX: 0 },
+  animate: { scaleX: 1 },
+  transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
+})
+
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const bgOrbsRef = useRef<HTMLDivElement>(null)
@@ -41,7 +76,6 @@ export function Hero() {
   const cardRef = useRef<HTMLDivElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollIndicatorRef = useRef<HTMLDivElement>(null)
-  const accentLineRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -61,7 +95,7 @@ export function Hero() {
       gsap.set(progressRef.current, { scaleX: 0 })
 
       gsap.to(imageRef.current, {
-        y: -12, duration: 3, ease: "sine.inOut", yoyo: true, repeat: -1,
+        y: -14, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1,
       })
 
       const orbs = bgOrbsRef.current?.children
@@ -76,32 +110,10 @@ export function Hero() {
         })
       }
 
-      // ── Intro ──
-      const intro = gsap.timeline({ delay: 0.2 })
-      const badge = firstSlideRef.current?.querySelector(".hero-badge")
-      const title1 = firstSlideRef.current?.querySelector(".hero-title-1")
-      const title2 = firstSlideRef.current?.querySelector(".hero-title-2")
-      const desc = firstSlideRef.current?.querySelector(".hero-desc")
-      const ctas = firstSlideRef.current?.querySelector(".hero-ctas")
-      const features = firstSlideRef.current?.querySelectorAll(".hero-feature")
-      const line = accentLineRef.current
-
-      intro
-        .fromTo(badge!, { y: 30, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.9, ease: "back.out(1.4)" })
-        .fromTo(line!, { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "power3.inOut" }, "-=0.3")
-        .fromTo(title1!, { y: 50, opacity: 0, clipPath: "inset(100% 0 0 0)" }, { y: 0, opacity: 1, clipPath: "inset(0% 0 0 0)", duration: 1, ease: "power4.out" }, "-=0.5")
-        .fromTo(title2!, { y: 50, opacity: 0, clipPath: "inset(100% 0 0 0)" }, { y: 0, opacity: 1, clipPath: "inset(0% 0 0 0)", duration: 1, ease: "power4.out" }, "-=0.7")
-        .fromTo(desc!, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.5")
-        .fromTo(ctas!, { y: 25, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.4")
-        .fromTo(
-          features ? Array.from(features) : [],
-          { y: 20, opacity: 0, scale: 0.95 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.5, stagger: 0.08, ease: "back.out(1.2)" },
-          "-=0.3"
-        )
-        .fromTo(imageRef.current!, { scale: 0.7, opacity: 0, x: 80, rotateY: -10 }, { scale: 1, opacity: 1, x: 0, rotateY: 0, duration: 1.4, ease: "expo.out" }, "-=1")
-        .fromTo(imageGlowRef.current!, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out" }, "-=1")
-        .fromTo(scrollIndicatorRef.current!, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.3")
+      gsap.fromTo(scrollIndicatorRef.current,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.8, delay: 1.8, ease: "power3.out" }
+      )
 
       // ══════════════════════════════════════════
       // SCROLL TIMELINE
@@ -110,7 +122,6 @@ export function Hero() {
         gsap.set(firstSlideRef.current, { xPercent: 0, opacity: 1, scale: 1, clearProps: "filter" })
         gsap.set(imageRef.current, { xPercent: 0, opacity: 1, scale: 1, clearProps: "filter" })
         gsap.set(imageGlowRef.current, { opacity: 1, scale: 1 })
-        gsap.set(accentLineRef.current, { scaleX: 1, opacity: 1 })
         gsap.set(scrollIndicatorRef.current, { opacity: 0 })
         texts.forEach(t => gsap.set(t, { yPercent: 80, opacity: 0, scale: 0.92, clearProps: "filter" }))
         decos.forEach(d => gsap.set(d, { scaleX: 0, opacity: 0 }))
@@ -154,7 +165,6 @@ export function Hero() {
         },
       })
 
-      // ── Phase 1: Slide 1 exit ──
       tl.to(scrollIndicatorRef.current, { opacity: 0, y: -10, duration: 0.2 }, 0)
 
       tl.to(firstSlideRef.current, {
@@ -164,9 +174,7 @@ export function Hero() {
         xPercent: 20, opacity: 0, scale: 0.9, filter: "blur(4px)", duration: 1, ease: "power2.in",
       }, 2)
       .to(imageGlowRef.current, { opacity: 0, scale: 1.5, duration: 0.8 }, 2)
-      .to(accentLineRef.current, { scaleX: 0, opacity: 0, duration: 0.6 }, 2)
 
-      // ── Phase 2: Slides 2-4 ──
       texts.forEach((text, i) => {
         const enterTime = 3 + i * 3
         const exitTime = enterTime + 2.2
@@ -182,32 +190,17 @@ export function Hero() {
           { yPercent: 0, opacity: 1, scale: 1, duration: 1, ease: "power3.out" },
           enterTime
         )
-        if (lineTop) {
-          tl.fromTo(lineTop, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + 0.1)
-        }
-        if (decoLine) {
-          tl.fromTo(decoLine, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, enterTime + 0.3)
-        }
-        if (lineBottom) {
-          tl.fromTo(lineBottom, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + 0.2)
-        }
-        if (slideDesc) {
-          tl.fromTo(slideDesc, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, enterTime + 0.4)
-        }
-        if (slideIcon) {
-          tl.fromTo(slideIcon, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, enterTime + 0.15)
-        }
-        if (deco) {
-          tl.fromTo(deco, { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 0.6, duration: 0.8, ease: "power2.inOut" }, enterTime + 0.2)
-        }
+        if (lineTop) tl.fromTo(lineTop, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + 0.1)
+        if (decoLine) tl.fromTo(decoLine, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, enterTime + 0.3)
+        if (lineBottom) tl.fromTo(lineBottom, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + 0.2)
+        if (slideDesc) tl.fromTo(slideDesc, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, enterTime + 0.4)
+        if (slideIcon) tl.fromTo(slideIcon, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, enterTime + 0.15)
+        if (deco) tl.fromTo(deco, { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 0.6, duration: 0.8, ease: "power2.inOut" }, enterTime + 0.2)
 
         tl.to(text, { yPercent: -50, opacity: 0, scale: 1.05, filter: "blur(3px)", duration: 0.8, ease: "power2.in" }, exitTime)
-        if (deco) {
-          tl.to(deco, { scaleX: 0, opacity: 0, duration: 0.5 }, exitTime)
-        }
+        if (deco) tl.to(deco, { scaleX: 0, opacity: 0, duration: 0.5 }, exitTime)
       })
 
-      // ── Phase 3: Slide 5 ──
       const finalEnter = 12
       tl.to(lastSlideRef.current, { opacity: 1, duration: 0.4 }, finalEnter)
         .fromTo(lastTextRef.current,
@@ -261,20 +254,33 @@ export function Hero() {
       <div ref={firstSlideRef} className="absolute inset-0 z-10 flex items-center">
         <div className="container-custom">
           <div className="flex items-center gap-8 lg:gap-12 xl:gap-20">
+            {/* Left: text — each element slides from a different direction */}
             <div className="flex-1 max-w-2xl">
-              <div className="hero-badge mb-6 inline-flex items-center gap-2.5 rounded-full border border-royal/25 bg-royal/[0.06] px-5 py-2.5 backdrop-blur-xl">
+              <motion.div
+                {...slideIn("top", 0.2, 0.8)}
+                className="hero-badge mb-6 inline-flex items-center gap-2.5 rounded-full border border-royal/25 bg-royal/[0.06] px-5 py-2.5 backdrop-blur-xl"
+              >
                 <div className="h-1.5 w-1.5 rounded-full bg-royal animate-pulse" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-royal/90">
                   Expert en droit des entreprises
                 </span>
-              </div>
+              </motion.div>
 
-              <div ref={accentLineRef} className="mb-5 h-[1px] w-20 origin-left" style={{ background: "linear-gradient(90deg, #627A93, transparent)" }} />
+              <motion.div
+                {...lineReveal(0.4)}
+                className="mb-5 h-[1px] w-20"
+                style={{ background: "linear-gradient(90deg, #627A93, transparent)" }}
+              />
 
-              <h1 className="hero-title-1 font-accent font-bold leading-[1.02] tracking-tight text-white" style={{ fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)" }}>
+              <motion.h1
+                {...slideIn("left", 0.3, 1)}
+                className="hero-title-1 font-accent font-bold leading-[1.02] tracking-tight text-white"
+                style={{ fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)" }}
+              >
                 Votre vision,
-              </h1>
-              <h1
+              </motion.h1>
+              <motion.h1
+                {...slideIn("left", 0.5, 1)}
                 className="hero-title-2 font-accent font-bold leading-[1.02] tracking-tight mt-1"
                 style={{
                   fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)",
@@ -284,13 +290,19 @@ export function Hero() {
                 }}
               >
                 notre protection juridique.
-              </h1>
+              </motion.h1>
 
-              <p className="hero-desc mt-7 max-w-lg text-white/45 text-base md:text-lg leading-relaxed font-body">
+              <motion.p
+                {...slideIn("bottom", 0.7, 0.9)}
+                className="hero-desc mt-7 max-w-lg text-white/45 text-base md:text-lg leading-relaxed font-body"
+              >
                 Accompagnement sur mesure pour la création et la croissance de votre entreprise. De la rédaction de statuts au conseil stratégique.
-              </p>
+              </motion.p>
 
-              <div className="hero-ctas mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <motion.div
+                {...slideIn("bottom", 0.85, 0.9)}
+                className="hero-ctas mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4"
+              >
                 <Link to="/contact">
                   <Button size="lg" className="group h-13 rounded-lg bg-gradient-to-r from-royal to-royal-dark px-8 text-base font-semibold text-white shadow-lg shadow-royal/20 hover:shadow-xl hover:shadow-royal/30 transition-all duration-300">
                     Consultation confidentielle
@@ -302,38 +314,62 @@ export function Hero() {
                     Nos expertises
                   </Button>
                 </Link>
-              </div>
+              </motion.div>
 
               <div className="mt-10 flex flex-wrap gap-3">
                 {[
                   { icon: ShieldCheck, label: "Protection juridique" },
                   { icon: FileText, label: "Formalités simplifiées" },
                   { icon: Scale, label: "Droit des sociétés" },
-                ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="hero-feature group flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 backdrop-blur-sm transition-all duration-300 hover:border-royal/20 hover:bg-royal/[0.04]">
+                ].map(({ icon: Icon, label }, i) => (
+                  <motion.div
+                    key={label}
+                    {...slideIn("bottom", 1 + i * 0.1, 0.7)}
+                    className="hero-feature group flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 backdrop-blur-sm transition-all duration-300 hover:border-royal/20 hover:bg-royal/[0.04]"
+                  >
                     <Icon className="h-3.5 w-3.5 text-royal/60 group-hover:text-royal/90 transition-colors" />
                     <span className="text-[13px] font-medium text-white/50 group-hover:text-white/70 transition-colors">{label}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
 
-            <div className="hidden lg:flex flex-1 items-center justify-center" style={{ perspective: "1200px" }}>
+            {/* Right: law image — slides from right */}
+            <motion.div
+              {...slideIn("right", 0.4, 1.3)}
+              className="hidden lg:flex flex-1 items-center justify-center"
+              style={{ perspective: "1200px" }}
+            >
               <div className="relative">
-                <div ref={imageGlowRef} className="absolute -inset-16 rounded-full" style={{ background: "radial-gradient(ellipse at center, rgba(98,122,147,0.15) 0%, rgba(98,122,147,0.05) 40%, transparent 70%)" }} />
-                <div className="absolute -inset-6 rounded-full border border-royal/[0.08] opacity-60" />
-                <div className="absolute -inset-12 rounded-full border border-royal/[0.04] opacity-40" />
+                <motion.div
+                  {...scaleIn(0.7, 1.2)}
+                  ref={imageGlowRef}
+                  className="absolute -inset-16 rounded-full"
+                  style={{ background: "radial-gradient(ellipse at center, rgba(98,122,147,0.15) 0%, rgba(98,122,147,0.05) 40%, transparent 70%)" }}
+                />
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 0.6 }}
+                  transition={{ duration: 1, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute -inset-6 rounded-full border border-royal/[0.08]"
+                />
+                <motion.div
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 0.4 }}
+                  transition={{ duration: 1.2, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute -inset-12 rounded-full border border-royal/[0.04]"
+                />
                 <div ref={imageRef} className="relative z-10">
                   <img src="/images/law.png" alt="Justice et droit" className="w-full max-w-[480px] xl:max-w-[540px] h-auto object-contain" style={{ filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.5)) drop-shadow(0 0 80px rgba(98,122,147,0.08))" }} />
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
 
       {/* ══════════════════════════════════════════ */}
-      {/* SLIDES 2–4 — Enriched centered slides     */}
+      {/* SLIDES 2–4 — Centered slides (GSAP scrub) */}
       {/* ══════════════════════════════════════════ */}
       <div className="relative z-10 flex h-full items-center justify-center pointer-events-none">
         <div className="w-full text-center">
@@ -347,11 +383,9 @@ export function Hero() {
               >
                 <div className="flex flex-col items-center gap-4 md:gap-5 max-w-3xl">
                   <div ref={(el) => { slideDecoRefs.current[i] = el }} className="h-[1px] w-24 md:w-32 origin-center" style={{ background: "linear-gradient(90deg, transparent, #627A93, transparent)" }} />
-
                   <div className="hero-slide-icon flex h-14 w-14 items-center justify-center rounded-2xl border border-royal/20 bg-royal/[0.08] mb-2">
                     <SlideIcon className="h-6 w-6 text-royal" />
                   </div>
-
                   <span className="hero-line-top block font-accent font-bold leading-[1.08] tracking-tight text-white" style={{ fontSize: "clamp(2rem, 5.5vw, 6rem)", textShadow: "0 4px 40px rgba(0,0,0,0.6)" }}>
                     {slide.top}
                   </span>
@@ -368,7 +402,6 @@ export function Hero() {
                   >
                     {slide.bottom}
                   </span>
-
                   <p className="hero-slide-desc mt-2 max-w-lg text-white/40 text-base md:text-lg leading-relaxed font-body">
                     {slide.desc}
                   </p>
