@@ -12,8 +12,8 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <Link to="/" className="mb-6 inline-block">
-              <span className="font-accent text-3xl font-bold text-white">
-                L<span className="text-royal">C</span>
+              <span className="font-accent text-2xl font-bold text-white">
+                Juridique <span className="text-royal">Pro</span>
               </span>
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-white/50">

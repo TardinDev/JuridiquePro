@@ -18,8 +18,6 @@ export function Header() {
   const navRef = useRef<HTMLElement>(null)
   const actionsRef = useRef<HTMLDivElement>(null)
 
-  const useLight = !isScrolled
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
@@ -69,7 +67,7 @@ export function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
           isScrolled
-            ? "glass dark:glass-dark header-glow py-3"
+            ? "bg-[#0a0e17]/95 backdrop-blur-xl border-b border-white/[0.06] py-3"
             : "bg-transparent py-5"
         )}
       >
@@ -80,12 +78,7 @@ export function Header() {
             to="/"
             className="group flex items-center gap-3 transition-opacity hover:opacity-90"
           >
-            <span
-              className={cn(
-                "font-accent text-2xl font-bold leading-none tracking-tight transition-colors duration-500",
-                useLight ? "text-white" : "text-foreground"
-              )}
-            >
+            <span className="font-accent text-2xl font-bold leading-none tracking-tight text-white">
               Juridique <span className="text-royal">Pro</span>
             </span>
           </Link>
@@ -99,10 +92,8 @@ export function Header() {
                 className={cn(
                   "relative px-5 py-2 text-sm font-medium transition-colors duration-300 rounded-lg",
                   location.pathname === link.href
-                    ? useLight ? "text-white" : "text-royal"
-                    : useLight
-                      ? "text-white/70 hover:text-white hover:bg-white/5"
-                      : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
+                    ? "text-white"
+                    : "text-white/70 hover:text-white hover:bg-white/5"
                 )}
               >
                 {link.label}
@@ -123,10 +114,7 @@ export function Header() {
 
             <button
               onClick={openMobileMenu}
-              className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-xl lg:hidden transition-colors duration-300",
-                useLight ? "text-white" : "text-foreground"
-              )}
+              className="flex h-9 w-9 items-center justify-center rounded-xl lg:hidden transition-colors duration-300 text-white"
               aria-label="Menu"
             >
               <Menu className="h-5 w-5" />
