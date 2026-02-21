@@ -39,7 +39,7 @@ export function FAQ() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="section-padding bg-[#E6E9EE]">
+    <section ref={sectionRef} className="section-padding bg-[#E0E3E9]">
       <div className="container-custom">
         <div className="mx-auto max-w-3xl">
           <div className="mb-12 text-center">
@@ -58,7 +58,7 @@ export function FAQ() {
               <AccordionItem
                 key={i}
                 value={`item-${i}`}
-                className="faq-item overflow-hidden rounded-xl border border-border bg-[#EEF0F3] px-6 card-glow data-[state=open]:border-royal/20 data-[state=open]:shadow-sm"
+                className="faq-item overflow-hidden rounded-xl border border-border bg-[#E8EAF0] px-6 card-glow data-[state=open]:border-royal/20 data-[state=open]:shadow-sm"
               >
                 <AccordionTrigger className="py-5 font-heading text-base font-semibold text-foreground hover:no-underline hover:text-royal [&[data-state=open]]:text-royal">
                   {item.question}

@@ -4,47 +4,47 @@
 
 @layer base {
   :root {
-    --background: 215 14% 95%;
-    --foreground: 215 25% 12%;
-    --card: 215 12% 96%;
-    --card-foreground: 215 25% 12%;
-    --popover: 215 12% 96%;
-    --popover-foreground: 215 25% 12%;
+    --background: 216 16% 92%;
+    --foreground: 215 28% 10%;
+    --card: 216 14% 93%;
+    --card-foreground: 215 28% 10%;
+    --popover: 216 14% 93%;
+    --popover-foreground: 215 28% 10%;
     --primary: 207 20% 48%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 12% 92%;
-    --secondary-foreground: 215 25% 12%;
-    --muted: 215 12% 92%;
-    --muted-foreground: 215 10% 42%;
+    --secondary: 216 12% 89%;
+    --secondary-foreground: 215 28% 10%;
+    --muted: 216 12% 89%;
+    --muted-foreground: 215 12% 38%;
     --accent: 207 20% 48%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 12% 87%;
-    --input: 215 12% 87%;
+    --border: 216 12% 84%;
+    --input: 216 12% 84%;
     --ring: 207 20% 40%;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 215 14% 95%;
-    --foreground: 215 25% 12%;
-    --card: 215 12% 96%;
-    --card-foreground: 215 25% 12%;
-    --popover: 215 12% 96%;
-    --popover-foreground: 215 25% 12%;
+    --background: 216 16% 92%;
+    --foreground: 215 28% 10%;
+    --card: 216 14% 93%;
+    --card-foreground: 215 28% 10%;
+    --popover: 216 14% 93%;
+    --popover-foreground: 215 28% 10%;
     --primary: 207 20% 48%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 12% 92%;
-    --secondary-foreground: 215 25% 12%;
-    --muted: 215 12% 92%;
-    --muted-foreground: 215 10% 42%;
+    --secondary: 216 12% 89%;
+    --secondary-foreground: 215 28% 10%;
+    --muted: 216 12% 89%;
+    --muted-foreground: 215 12% 38%;
     --accent: 207 20% 48%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 12% 87%;
-    --input: 215 12% 87%;
+    --border: 216 12% 84%;
+    --input: 216 12% 84%;
     --ring: 207 20% 40%;
   }
 }
@@ -84,9 +84,9 @@
   }
 
   .glass {
-    background: hsl(var(--background) / 0.88);
+    background: hsl(var(--background) / 0.9);
     @apply backdrop-blur-2xl;
-    border: 1px solid hsl(var(--border) / 0.6);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
 
   .glass-dark {
@@ -130,12 +130,12 @@
 
   .mesh-gradient {
     background:
-      radial-gradient(at 40% 20%, #ECEEF2 0px, transparent 50%),
+      radial-gradient(at 40% 20%, #E2E5EB 0px, transparent 50%),
       radial-gradient(at 80% 0%, rgba(98, 122, 147, 0.08) 0px, transparent 50%),
       radial-gradient(at 0% 50%, rgba(98, 122, 147, 0.06) 0px, transparent 50%),
-      radial-gradient(at 80% 50%, #ECEEF2 0px, transparent 50%),
+      radial-gradient(at 80% 50%, #E2E5EB 0px, transparent 50%),
       radial-gradient(at 0% 100%, rgba(98, 122, 147, 0.06) 0px, transparent 50%),
-      #E9ECF0;
+      #DFE2E8;
   }
 
   .section-padding {
@@ -162,7 +162,7 @@
   }
 
   .bg-surface {
-    background: hsl(215 12% 92%);
+    background: hsl(216 14% 90%);
   }
 
   .section-divider {

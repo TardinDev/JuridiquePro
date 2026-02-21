@@ -37,7 +37,7 @@ export function Stats() {
   return (
     <section ref={sectionRef} className="relative overflow-hidden py-20">
       {/* Light grey background */}
-      <div className="absolute inset-0 bg-[#E3E6EB]" />
+      <div className="absolute inset-0 bg-[#DCDFE6]" />
       <div className="noise absolute inset-0" />
 
       <div className="container-custom relative z-10">
