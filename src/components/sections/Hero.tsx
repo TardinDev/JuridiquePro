@@ -37,6 +37,17 @@ const fadeUp = (delay: number, duration = 0.8) => ({
   transition: { duration, delay, ease: EASE },
 })
 
+const slideInView = (dir: "left" | "right" | "top" | "bottom", delay: number, duration = 1) => {
+  const axis = dir === "left" || dir === "right" ? "x" : "y"
+  const val = dir === "left" ? -80 : dir === "right" ? 80 : dir === "top" ? -50 : 50
+  return {
+    initial: { [axis]: val, opacity: 0 },
+    whileInView: { [axis]: 0, opacity: 1 },
+    viewport: { once: true, margin: "-60px" },
+    transition: { duration, delay, ease: EASE },
+  }
+}
+
 // ══════════════════════════════════════════════════════════════
 export function Hero() {
   const bgOrbsRef = useRef<HTMLDivElement>(null)
@@ -82,7 +93,7 @@ export function Hero() {
         <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-24 lg:py-0">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-12 xl:gap-20">
             {/* Left — Text */}
-            <div className="flex-1">
+            <div className="flex-1 pl-4 lg:pl-8">
               <motion.div
                 {...slideIn("top", 0.2, 0.8)}
                 className="hero-badge mb-6 inline-flex items-center gap-2.5 rounded-full border border-royal/25 bg-royal/[0.06] px-5 py-2.5 backdrop-blur-xl w-fit"
@@ -99,26 +110,33 @@ export function Hero() {
                 style={{ background: "linear-gradient(90deg, #627A93, transparent)" }}
               />
 
-              <motion.h1
-                {...slideIn("left", 0.3, 1)}
-                className="font-accent font-bold leading-[1.05] tracking-tight text-white"
-                style={{ fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)" }}
-              >
-                Votre vision,
-              </motion.h1>
-              <motion.h1
-                {...slideIn("left", 0.5, 1)}
-                className="font-accent font-bold leading-[1.05] tracking-tight mt-1"
-                style={{
-                  fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)",
-                  background: "linear-gradient(135deg, #627A93 0%, #8FA5B8 50%, #627A93 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                notre protection<br />
-                juridique.
-              </motion.h1>
+              <motion.div {...slideIn("left", 0.3, 1)}>
+                <h1 className="font-accent font-bold leading-[1.05] tracking-tight text-white" style={{ fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)" }}>
+                  Votre vision,
+                </h1>
+                <h1
+                  className="font-accent font-bold leading-[1.05] tracking-tight"
+                  style={{
+                    fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)",
+                    background: "linear-gradient(135deg, #627A93 0%, #8FA5B8 50%, #627A93 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  notre protection
+                </h1>
+                <h1
+                  className="font-accent font-bold leading-[1.05] tracking-tight"
+                  style={{
+                    fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)",
+                    background: "linear-gradient(135deg, #627A93 0%, #8FA5B8 50%, #627A93 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  juridique.
+                </h1>
+              </motion.div>
 
               <motion.p
                 {...slideIn("bottom", 0.7, 0.9)}
@@ -202,10 +220,10 @@ export function Hero() {
         <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
           {/* Section title */}
           <div className="text-center mb-16 md:mb-20">
-            <motion.span {...fadeUp(0)} className="text-[11px] font-semibold uppercase tracking-[0.35em] text-royal/60">
+            <motion.span {...slideInView("top", 0, 0.9)} className="text-[11px] font-semibold uppercase tracking-[0.35em] text-royal/60">
               Nos expertises
             </motion.span>
-            <motion.h2 {...fadeUp(0.1)} className="mt-4 font-accent font-bold text-white leading-[1.1]" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
+            <motion.h2 {...slideInView("left", 0.1, 1)} className="mt-4 font-accent font-bold text-white leading-[1.1]" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
               Tout pour lancer et<br />
               <span className="text-royal">sécuriser votre entreprise.</span>
             </motion.h2>
@@ -214,7 +232,7 @@ export function Hero() {
           {/* 3 Columns */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             {/* Thème 1 — Création */}
-            <motion.div {...fadeUp(0)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
+            <motion.div {...slideInView("left", 0, 1)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
                 <FileText className="h-5 w-5 text-royal" />
               </div>
@@ -238,7 +256,7 @@ export function Hero() {
             </motion.div>
 
             {/* Thème 2 — Micro-entreprise */}
-            <motion.div {...fadeUp(0.15)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
+            <motion.div {...slideInView("bottom", 0.15, 1)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
                 <Users className="h-5 w-5 text-royal" />
               </div>
@@ -262,7 +280,7 @@ export function Hero() {
             </motion.div>
 
             {/* Thème 3 — Droit des sociétés */}
-            <motion.div {...fadeUp(0.3)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
+            <motion.div {...slideInView("right", 0.3, 1)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
                 <Scale className="h-5 w-5 text-royal" />
               </div>
@@ -297,28 +315,28 @@ export function Hero() {
             {/* Text */}
             <div className="flex-1 text-center lg:text-left">
               <div className="flex flex-col gap-3 md:gap-4">
-                <motion.div {...fadeUp(0)} className="mx-auto lg:mx-0 flex h-12 w-12 items-center justify-center rounded-xl border border-royal/20 bg-royal/[0.08] mb-2">
+                <motion.div {...slideInView("top", 0, 0.9)} className="mx-auto lg:mx-0 flex h-12 w-12 items-center justify-center rounded-xl border border-royal/20 bg-royal/[0.08] mb-2">
                   <BookOpen className="h-5 w-5 text-royal" />
                 </motion.div>
-                <motion.span {...fadeUp(0.1)} className="block font-accent font-bold leading-[1.08] tracking-tight text-white" style={{ fontSize: "clamp(1.8rem, 4.5vw, 5rem)" }}>
+                <motion.span {...slideInView("left", 0.1, 1)} className="block font-accent font-bold leading-[1.08] tracking-tight text-white" style={{ fontSize: "clamp(1.8rem, 4.5vw, 5rem)" }}>
                   Prenons contact,
                 </motion.span>
-                <motion.div {...fadeUp(0.15)} className="h-[1px] w-16 md:w-24 rounded-full mx-auto lg:mx-0" style={{ background: "linear-gradient(90deg, #627A93, transparent)" }} />
+                <motion.div {...slideInView("left", 0.2, 0.9)} className="h-[1px] w-16 md:w-24 rounded-full mx-auto lg:mx-0" style={{ background: "linear-gradient(90deg, #627A93, transparent)" }} />
                 <motion.span
-                  {...fadeUp(0.2)}
+                  {...slideInView("right", 0.25, 1)}
                   className="block font-accent font-bold leading-[1.08] tracking-tight"
                   style={{ fontSize: "clamp(1.8rem, 4.5vw, 5rem)", background: "linear-gradient(135deg, #627A93, #8FA5B8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
                 >
                   construisons ensemble.
                 </motion.span>
-                <motion.p {...fadeUp(0.25)} className="mt-4 max-w-md text-white/40 text-sm md:text-base leading-relaxed mx-auto lg:mx-0">
+                <motion.p {...slideInView("bottom", 0.3, 0.9)} className="mt-4 max-w-md text-white/40 text-sm md:text-base leading-relaxed mx-auto lg:mx-0">
                   Que vous lanciez une société ou une micro-entreprise, première consultation gratuite et sans engagement. Nous identifions vos besoins et vous proposons un plan d'action clair.
                 </motion.p>
               </div>
             </div>
 
             {/* Card */}
-            <motion.div {...fadeUp(0.3)} className="flex-shrink-0" style={{ perspective: "1200px" }}>
+            <motion.div {...slideInView("right", 0.2, 1.1)} className="flex-shrink-0" style={{ perspective: "1200px" }}>
               <div
                 className="relative w-[340px] md:w-[400px] rounded-2xl border border-white/[0.08] p-8 md:p-10 backdrop-blur-2xl overflow-hidden"
                 style={{
@@ -362,7 +380,7 @@ export function Hero() {
           </div>
 
           {/* CTA Buttons */}
-          <motion.div {...fadeUp(0.35)} className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
+          <motion.div {...slideInView("bottom", 0.35, 1)} className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
             <Link to="/contact">
               <Button size="lg" className="group h-14 rounded-lg bg-gradient-to-r from-royal to-royal-dark px-10 text-base font-semibold text-white shadow-lg shadow-royal/20 hover:shadow-xl hover:shadow-royal/30 transition-all duration-300">
                 Consultation confidentielle
