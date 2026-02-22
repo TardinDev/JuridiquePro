@@ -10,7 +10,7 @@ import { useSEO } from "@/hooks/useSEO"
 export default function Home() {
   useSEO({
     description:
-      "LC — Cabinet juridique expert en création d'entreprises et droit des affaires. Votre vision. Notre protection juridique.",
+      "Juridique Pro — Cabinet juridique expert en création de sociétés, micro-entreprises et droit des affaires. Votre vision. Notre protection juridique.",
   })
 
   return (

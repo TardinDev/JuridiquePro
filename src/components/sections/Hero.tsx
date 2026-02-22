@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { ArrowRight, Mail, Phone, MapPin, Scale, ShieldCheck, FileText, Briefcase, Users, BookOpen } from "lucide-react"
+import { ArrowRight, Mail, Phone, MapPin, Scale, FileText, Users, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import gsap from "gsap"
@@ -8,48 +8,48 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const HERO_SLIDES = [
-  {
-    top: "Création de société",
-    bottom: "SARL, SAS, SASU, SA, SCI.",
-    desc: "Rédaction des statuts, dépôt du capital, annonce légale et immatriculation — votre société clé en main.",
-    icon: Briefcase,
-  },
-  {
-    top: "Micro-entreprise",
-    bottom: "& Formalités INPI.",
-    desc: "Immatriculation, modification d'activité ou cessation — toutes vos démarches sur le guichet unique INPI.",
-    icon: FileText,
-  },
-  {
-    top: "Contrats commerciaux",
-    bottom: "& Protection juridique.",
-    desc: "Sécurisez vos partenariats, vos CGV et vos accords avec des contrats sur mesure et blindés.",
-    icon: ShieldCheck,
-  },
-  {
-    top: "Un accompagnement",
-    bottom: "sur mesure.",
-    desc: "Société ou micro-entreprise, notre expertise s'adapte à vos enjeux et à votre ambition.",
-    icon: Users,
-  },
+// ── Balance data ──────────────────────────────────────────────
+const BAL_STEPS = [
+  { left: "Création de société", right: "SARL, SAS, SASU, SA, SCI" },
+  { left: "Microentreprise", right: "Formalité INPI" },
+  { left: "Comptabilité", right: "Bilan, Compte de résultat" },
+  { left: "Fiscalité", right: "Impôts, TVA, CFE" },
+  { left: "Conseil juridique", right: "Statuts, Assemblées" },
 ]
+const BAL_ANGLES = [-20, 0, 20, 0, -20]
+const CH = { long: 115, base: 90, short: 65 }
 
+function chainH(a: number) {
+  return {
+    l: a < 0 ? CH.long : a > 0 ? CH.short : CH.base,
+    r: a > 0 ? CH.long : a < 0 ? CH.short : CH.base,
+  }
+}
+
+const GOLD = {
+  bar: "linear-gradient(90deg, #B8860B, #DAA520 18%, #FFD700 38%, #FFF8DC 50%, #FFD700 62%, #DAA520 82%, #B8860B)",
+  pillar: "linear-gradient(90deg, #B8860B 10%, #DAA520 30%, #FFD700 50%, #DAA520 70%, #B8860B 90%)",
+  plate: "linear-gradient(180deg, #FFF8DC 0%, #FFD700 30%, #DAA520 70%, #B8860B 100%)",
+}
+
+function ChainSVG() {
+  return (
+    <svg viewBox="0 0 120 100" preserveAspectRatio="none" style={{ width: "clamp(100px, 18vw, 160px)", height: "100%" }}>
+      <line x1="60" y1="0" x2="6" y2="100" stroke="#DAA520" strokeWidth="1.5" opacity="0.85" />
+      <line x1="60" y1="0" x2="60" y2="100" stroke="#DAA520" strokeWidth="1" opacity="0.4" />
+      <line x1="60" y1="0" x2="114" y2="100" stroke="#DAA520" strokeWidth="1.5" opacity="0.85" />
+    </svg>
+  )
+}
+
+// ── Framer Motion helpers ─────────────────────────────────────
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
-const slideIn = (
-  direction: "left" | "right" | "top" | "bottom",
-  delay: number,
-  duration = 0.9
-) => {
-  const axis = direction === "left" || direction === "right" ? "x" : "y"
-  const value =
-    direction === "left" ? -70 :
-    direction === "right" ? 70 :
-    direction === "top" ? -40 : 40
-
+const slideIn = (dir: "left" | "right" | "top" | "bottom", delay: number, duration = 0.9) => {
+  const axis = dir === "left" || dir === "right" ? "x" : "y"
+  const val = dir === "left" ? -70 : dir === "right" ? 70 : dir === "top" ? -40 : 40
   return {
-    initial: { [axis]: value, opacity: 0 },
+    initial: { [axis]: val, opacity: 0 },
     animate: { [axis]: 0, opacity: 1 },
     transition: { duration, delay, ease: EASE },
   }
@@ -67,14 +67,41 @@ const lineReveal = (delay: number) => ({
   transition: { duration: 0.8, delay, ease: EASE },
 })
 
+// ── Shared balance plate style ────────────────────────────────
+const plateStyle: React.CSSProperties = {
+  width: "clamp(110px, 19vw, 170px)",
+  height: "clamp(12px, 1.6vw, 18px)",
+  borderRadius: "50% / 40% 40% 100% 100%",
+  background: GOLD.plate,
+  filter: "drop-shadow(0 6px 18px rgba(184,134,11,0.5))",
+  position: "relative",
+}
+
+const textBoxStyle: React.CSSProperties = {
+  position: "relative",
+  width: "clamp(130px, 22vw, 210px)",
+  minHeight: 48,
+  marginTop: 14,
+}
+
+// ══════════════════════════════════════════════════════════════
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const bgOrbsRef = useRef<HTMLDivElement>(null)
   const firstSlideRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
   const imageGlowRef = useRef<HTMLDivElement>(null)
-  const textRefs = useRef<(HTMLDivElement | null)[]>([])
-  const slideDecoRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const balRef = useRef<HTMLDivElement>(null)
+  const balArmRef = useRef<HTMLDivElement>(null)
+  const balLAsmRef = useRef<HTMLDivElement>(null)
+  const balRAsmRef = useRef<HTMLDivElement>(null)
+  const balLChainRef = useRef<HTMLDivElement>(null)
+  const balRChainRef = useRef<HTMLDivElement>(null)
+  const balLTexts = useRef<(HTMLDivElement | null)[]>([])
+  const balRTexts = useRef<(HTMLDivElement | null)[]>([])
+  const balDots = useRef<(HTMLDivElement | null)[]>([])
+
   const lastSlideRef = useRef<HTMLDivElement>(null)
   const lastTextRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -86,22 +113,31 @@ export function Hero() {
     let heroCompleted = false
 
     const ctx = gsap.context(() => {
-      const texts = textRefs.current.filter(Boolean) as HTMLDivElement[]
-      const decos = slideDecoRefs.current.filter(Boolean) as HTMLDivElement[]
-      if (texts.length < 4) return
+      const lt = balLTexts.current.filter(Boolean) as HTMLDivElement[]
+      const rt = balRTexts.current.filter(Boolean) as HTMLDivElement[]
+      const dots = balDots.current.filter(Boolean) as HTMLDivElement[]
+      if (lt.length < 5 || rt.length < 5) return
 
-      gsap.set(texts, { yPercent: 80, opacity: 0, scale: 0.92 })
-      gsap.set(decos, { scaleX: 0, opacity: 0 })
+      // ── Initial states ──
+      const init = chainH(BAL_ANGLES[0])
+      gsap.set(balRef.current, { opacity: 0, scale: 0.92 })
+      gsap.set(balArmRef.current, { rotation: BAL_ANGLES[0], transformOrigin: "50% 50%", force3D: true })
+      gsap.set(balLAsmRef.current, { rotation: -BAL_ANGLES[0], transformOrigin: "top center", force3D: true })
+      gsap.set(balRAsmRef.current, { rotation: -BAL_ANGLES[0], transformOrigin: "top center", force3D: true })
+      gsap.set(balLChainRef.current, { height: init.l })
+      gsap.set(balRChainRef.current, { height: init.r })
+      lt.forEach((el, i) => gsap.set(el, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 20 }))
+      rt.forEach((el, i) => gsap.set(el, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 20 }))
+      dots.forEach((el, i) => gsap.set(el, { scale: i === 0 ? 1.5 : 1, backgroundColor: i === 0 ? "#FFD700" : "rgba(255,215,0,0.2)" }))
+
       gsap.set(lastSlideRef.current, { opacity: 0 })
       gsap.set(lastTextRef.current, { xPercent: -50, opacity: 0 })
       gsap.set(cardRef.current, { xPercent: 50, opacity: 0, rotateY: 20, scale: 0.9 })
       gsap.set(ctaRef.current, { yPercent: 40, opacity: 0 })
       gsap.set(progressRef.current, { scaleX: 0 })
 
-      gsap.to(imageRef.current, {
-        y: -14, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1,
-      })
-
+      // ── Ambient ──
+      gsap.to(imageRef.current, { y: -14, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1 })
       const orbs = bgOrbsRef.current?.children
       if (orbs) {
         Array.from(orbs).forEach((orb, i) => {
@@ -113,118 +149,107 @@ export function Hero() {
           })
         })
       }
-
-      gsap.fromTo(scrollIndicatorRef.current,
-        { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.8, delay: 1.8, ease: "power3.out" }
-      )
+      gsap.fromTo(scrollIndicatorRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, delay: 1.8, ease: "power3.out" })
 
       // ══════════════════════════════════════════
-      // SCROLL TIMELINE
+      // RESET
       // ══════════════════════════════════════════
       const resetToSlide1 = () => {
         gsap.set(firstSlideRef.current, { xPercent: 0, opacity: 1, scale: 1, clearProps: "filter" })
         gsap.set(imageRef.current, { xPercent: 0, opacity: 1, scale: 1, clearProps: "filter" })
         gsap.set(imageGlowRef.current, { opacity: 1, scale: 1 })
         gsap.set(scrollIndicatorRef.current, { opacity: 0 })
-        texts.forEach(t => gsap.set(t, { yPercent: 80, opacity: 0, scale: 0.92, clearProps: "filter" }))
-        decos.forEach(d => gsap.set(d, { scaleX: 0, opacity: 0 }))
+
+        const ic = chainH(BAL_ANGLES[0])
+        gsap.set(balRef.current, { opacity: 0, scale: 0.92, clearProps: "filter" })
+        gsap.set(balArmRef.current, { rotation: BAL_ANGLES[0] })
+        gsap.set(balLAsmRef.current, { rotation: -BAL_ANGLES[0] })
+        gsap.set(balRAsmRef.current, { rotation: -BAL_ANGLES[0] })
+        gsap.set(balLChainRef.current, { height: ic.l })
+        gsap.set(balRChainRef.current, { height: ic.r })
+        lt.forEach((el, i) => gsap.set(el, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 20 }))
+        rt.forEach((el, i) => gsap.set(el, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 20 }))
+        dots.forEach((el, i) => gsap.set(el, { scale: i === 0 ? 1.5 : 1, backgroundColor: i === 0 ? "#FFD700" : "rgba(255,215,0,0.2)" }))
+
         gsap.set(lastSlideRef.current, { opacity: 0 })
         gsap.set(lastTextRef.current, { xPercent: -50, opacity: 0, clearProps: "filter" })
         gsap.set(cardRef.current, { xPercent: 50, opacity: 0, rotateY: 20, scale: 0.9 })
         gsap.set(ctaRef.current, { yPercent: 40, opacity: 0 })
       }
 
+      // ══════════════════════════════════════════
+      // SCROLL TIMELINE
+      // ══════════════════════════════════════════
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=750%",
+          end: "+=600%",
           pin: true,
           scrub: 0.8,
           anticipatePin: 1,
           onUpdate: (self) => {
-            if (heroCompleted) {
-              tl.progress(0)
-              gsap.set(progressRef.current, { scaleX: 0 })
-              return
-            }
+            if (heroCompleted) { tl.progress(0); gsap.set(progressRef.current, { scaleX: 0 }); return }
             gsap.set(progressRef.current, { scaleX: self.progress })
           },
-          onLeave: () => {
-            heroCompleted = true
-            tl.progress(0)
-            resetToSlide1()
-            gsap.set(progressRef.current, { scaleX: 0 })
-          },
-          onEnterBack: () => {
-            if (heroCompleted) {
-              tl.progress(0)
-              resetToSlide1()
-            }
-          },
-          onLeaveBack: () => {
-            heroCompleted = false
-          },
+          onLeave: () => { heroCompleted = true; tl.progress(0); resetToSlide1(); gsap.set(progressRef.current, { scaleX: 0 }) },
+          onEnterBack: () => { if (heroCompleted) { tl.progress(0); resetToSlide1() } },
+          onLeaveBack: () => { heroCompleted = false },
         },
       })
 
+      // Phase 0 — scroll indicator
       tl.to(scrollIndicatorRef.current, { opacity: 0, y: -10, duration: 0.2 }, 0)
 
-      tl.to(firstSlideRef.current, {
-        xPercent: -20, opacity: 0, scale: 0.95, filter: "blur(4px)", duration: 1, ease: "power2.in",
-      }, 2)
-      .to(imageRef.current, {
-        xPercent: 20, opacity: 0, scale: 0.9, filter: "blur(4px)", duration: 1, ease: "power2.in",
-      }, 2)
-      .to(imageGlowRef.current, { opacity: 0, scale: 1.5, duration: 0.8 }, 2)
+      // Phase 1 — Slide 1 exits (t 2→3)
+      tl.to(firstSlideRef.current, { xPercent: -20, opacity: 0, scale: 0.95, filter: "blur(4px)", duration: 1, ease: "power2.in" }, 2)
+        .to(imageRef.current, { xPercent: 20, opacity: 0, scale: 0.9, filter: "blur(4px)", duration: 1, ease: "power2.in" }, 2)
+        .to(imageGlowRef.current, { opacity: 0, scale: 1.5, duration: 0.8 }, 2)
 
-      texts.forEach((text, i) => {
-        const enterTime = 3 + i * 3
-        const exitTime = enterTime + 2.2
-        const deco = decos[i]
-        const lineTop = text.querySelector(".hero-line-top")
-        const lineBottom = text.querySelector(".hero-line-bottom")
-        const decoLine = text.querySelector(".hero-deco")
-        const slideDesc = text.querySelector(".hero-slide-desc")
-        const slideIcon = text.querySelector(".hero-slide-icon")
+      // Phase 2 — Balance enters (t 3→3.5)
+      tl.to(balRef.current, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 3)
 
-        tl.fromTo(text,
-          { yPercent: 80, opacity: 0, scale: 0.92 },
-          { yPercent: 0, opacity: 1, scale: 1, duration: 1, ease: "power3.out" },
-          enterTime
-        )
-        const balanceImg = text.querySelector(".hero-balance-img")
-        if (balanceImg) {
-          tl.fromTo(balanceImg, { scale: 0.6, opacity: 0, rotate: -8 }, { scale: 1, opacity: 1, rotate: 0, duration: 1.2, ease: "power3.out" }, enterTime + 0.1)
-        }
-        if (lineTop) tl.fromTo(lineTop, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + (balanceImg ? 0.4 : 0.1))
-        if (decoLine) tl.fromTo(decoLine, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, enterTime + 0.3)
-        if (lineBottom) tl.fromTo(lineBottom, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + (balanceImg ? 0.6 : 0.2))
-        if (slideDesc) tl.fromTo(slideDesc, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, enterTime + (balanceImg ? 0.8 : 0.4))
-        if (slideIcon) tl.fromTo(slideIcon, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, enterTime + 0.15)
-        if (deco) tl.fromTo(deco, { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 0.6, duration: 0.8, ease: "power2.inOut" }, enterTime + 0.2)
+      // Phase 3 — Balance 4 step transitions (t 3.5→7.5)
+      for (let s = 0; s < 4; s++) {
+        const t = 3.5 + s
+        const angle = BAL_ANGLES[s + 1]
+        const c = chainH(angle)
 
-        tl.to(text, { yPercent: -50, opacity: 0, scale: 1.05, filter: "blur(3px)", duration: 0.8, ease: "power2.in" }, exitTime)
-        if (deco) tl.to(deco, { scaleX: 0, opacity: 0, duration: 0.5 }, exitTime)
-      })
+        tl.to(balArmRef.current, { rotation: angle, duration: 1, ease: "power2.inOut" }, t)
+        tl.to(balLAsmRef.current, { rotation: -angle, duration: 1, ease: "power2.inOut" }, t)
+        tl.to(balRAsmRef.current, { rotation: -angle, duration: 1, ease: "power2.inOut" }, t)
+        tl.to(balLChainRef.current, { height: c.l, duration: 1, ease: "power2.inOut" }, t)
+        tl.to(balRChainRef.current, { height: c.r, duration: 1, ease: "power2.inOut" }, t)
 
-      const finalEnter = 15
-      tl.to(lastSlideRef.current, { opacity: 1, duration: 0.4 }, finalEnter)
+        tl.to(lt[s], { opacity: 0, y: -15, duration: 0.3, ease: "power2.in" }, t + 0.1)
+        tl.to(rt[s], { opacity: 0, y: -15, duration: 0.3, ease: "power2.in" }, t + 0.1)
+        tl.fromTo(lt[s + 1], { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t + 0.6)
+        tl.fromTo(rt[s + 1], { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t + 0.6)
+
+        tl.to(dots[s], { scale: 1, backgroundColor: "rgba(255,215,0,0.2)", duration: 0.3 }, t + 0.2)
+        tl.to(dots[s + 1], { scale: 1.5, backgroundColor: "#FFD700", duration: 0.3 }, t + 0.5)
+      }
+
+      // Phase 4 — Balance exits (t 7.8→8.3)
+      tl.to(balRef.current, { opacity: 0, scale: 0.95, filter: "blur(3px)", duration: 0.5, ease: "power2.in" }, 7.8)
+
+      // Phase 5 — Final slide enters (t 9)
+      const fin = 9
+      tl.to(lastSlideRef.current, { opacity: 1, duration: 0.4 }, fin)
         .fromTo(lastTextRef.current,
           { xPercent: -50, opacity: 0, filter: "blur(6px)" },
           { xPercent: 0, opacity: 1, filter: "blur(0px)", duration: 1.4, ease: "power3.out" },
-          finalEnter
+          fin
         )
         .fromTo(cardRef.current,
           { xPercent: 50, opacity: 0, rotateY: 20, scale: 0.9 },
           { xPercent: 0, opacity: 1, rotateY: 0, scale: 1, duration: 1.4, ease: "power3.out" },
-          finalEnter + 0.2
+          fin + 0.2
         )
         .fromTo(ctaRef.current,
           { yPercent: 40, opacity: 0 },
           { yPercent: 0, opacity: 1, duration: 1, ease: "back.out(1.2)" },
-          finalEnter + 0.6
+          fin + 0.6
         )
     }, sectionRef)
 
@@ -262,7 +287,6 @@ export function Hero() {
       <div ref={firstSlideRef} className="absolute inset-0 z-10 flex items-center">
         <div className="container-custom">
           <div className="flex items-center gap-8 lg:gap-12 xl:gap-20">
-            {/* Left: text — each element slides from a different direction */}
             <div className="flex-1 max-w-2xl">
               <motion.div
                 {...slideIn("top", 0.2, 0.8)}
@@ -282,14 +306,14 @@ export function Hero() {
 
               <motion.h1
                 {...slideIn("left", 0.3, 1)}
-                className="hero-title-1 font-accent font-bold leading-[1.02] tracking-tight text-white"
+                className="font-accent font-bold leading-[1.02] tracking-tight text-white"
                 style={{ fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)" }}
               >
                 Votre vision,
               </motion.h1>
               <motion.h1
                 {...slideIn("left", 0.5, 1)}
-                className="hero-title-2 font-accent font-bold leading-[1.02] tracking-tight mt-1"
+                className="font-accent font-bold leading-[1.02] tracking-tight mt-1"
                 style={{
                   fontSize: "clamp(2.4rem, 4.8vw, 5.2rem)",
                   background: "linear-gradient(135deg, #627A93 0%, #8FA5B8 50%, #627A93 100%)",
@@ -302,14 +326,14 @@ export function Hero() {
 
               <motion.p
                 {...slideIn("bottom", 0.7, 0.9)}
-                className="hero-desc mt-7 max-w-lg text-white/45 text-base md:text-lg leading-relaxed font-body"
+                className="mt-7 max-w-lg text-white/45 text-base md:text-lg leading-relaxed font-body"
               >
                 Création de société ou immatriculation de micro-entreprise — nous prenons en charge toutes vos formalités juridiques, de A à Z.
               </motion.p>
 
               <motion.div
                 {...slideIn("bottom", 0.85, 0.9)}
-                className="hero-ctas mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4"
+                className="mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4"
               >
                 <Link to="/contact">
                   <Button size="lg" className="group h-13 rounded-lg bg-gradient-to-r from-royal to-royal-dark px-8 text-base font-semibold text-white shadow-lg shadow-royal/20 hover:shadow-xl hover:shadow-royal/30 transition-all duration-300">
@@ -333,7 +357,7 @@ export function Hero() {
                   <motion.div
                     key={label}
                     {...slideIn("bottom", 1 + i * 0.1, 0.7)}
-                    className="hero-feature group flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 backdrop-blur-sm transition-all duration-300 hover:border-royal/20 hover:bg-royal/[0.04]"
+                    className="group flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 backdrop-blur-sm transition-all duration-300 hover:border-royal/20 hover:bg-royal/[0.04]"
                   >
                     <Icon className="h-3.5 w-3.5 text-royal/60 group-hover:text-royal/90 transition-colors" />
                     <span className="text-[13px] font-medium text-white/50 group-hover:text-white/70 transition-colors">{label}</span>
@@ -342,7 +366,6 @@ export function Hero() {
               </div>
             </div>
 
-            {/* Right: law image — slides from right */}
             <motion.div
               {...slideIn("right", 0.4, 1.3)}
               className="hidden lg:flex flex-1 items-center justify-center"
@@ -358,13 +381,13 @@ export function Hero() {
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 0.6 }}
-                  transition={{ duration: 1, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 1, delay: 0.9, ease: EASE }}
                   className="absolute -inset-6 rounded-full border border-royal/[0.08]"
                 />
                 <motion.div
                   initial={{ scale: 0.7, opacity: 0 }}
                   animate={{ scale: 1, opacity: 0.4 }}
-                  transition={{ duration: 1.2, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 1.2, delay: 1.1, ease: EASE }}
                   className="absolute -inset-12 rounded-full border border-royal/[0.04]"
                 />
                 <div ref={imageRef} className="relative z-10">
@@ -377,106 +400,96 @@ export function Hero() {
       </div>
 
       {/* ══════════════════════════════════════════ */}
-      {/* SLIDES 2–4 — Centered slides (GSAP scrub) */}
+      {/* BALANCE — Animated golden scale             */}
       {/* ══════════════════════════════════════════ */}
-      <div className="relative z-10 flex h-full items-center justify-center pointer-events-none">
-        <div className="w-full text-center">
-          {HERO_SLIDES.map((slide, i) => {
-            const SlideIcon = slide.icon
+      <div ref={balRef} className="absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ willChange: "transform, opacity" }}>
+        {/* Title */}
+        <div className="absolute top-[6%] md:top-[8%] left-0 right-0 text-center z-10 px-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.35em]" style={{ color: "rgba(255,215,0,0.45)" }}>
+            Nos domaines
+          </span>
+          <h2
+            className="mt-2 font-accent text-3xl md:text-4xl lg:text-5xl font-bold"
+            style={{ background: "linear-gradient(135deg, #B8860B, #FFD700 40%, #FFF8DC 55%, #FFD700 70%, #B8860B)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+          >
+            d'expertise
+          </h2>
+        </div>
 
-            if (i === 2) {
-              return (
-                <div
-                  key={i}
-                  ref={(el) => { textRefs.current[i] = el }}
-                  className="absolute inset-0 flex items-center justify-center px-6 md:px-12"
-                >
-                  <div ref={(el) => { slideDecoRefs.current[i] = el }} className="absolute top-[8%] left-1/2 -translate-x-1/2 h-[1px] w-24 md:w-32 origin-center" style={{ background: "linear-gradient(90deg, transparent, #627A93, transparent)" }} />
+        {/* Gold ambient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.06]" style={{ background: "radial-gradient(circle, #FFD700, transparent 70%)" }} />
 
-                  <div className="relative w-full max-w-[700px] lg:max-w-[800px] mx-auto">
-                    <img
-                      src="/images/balance.jpeg"
-                      alt="Balance de la justice"
-                      className="hero-balance-img w-full h-auto object-contain"
-                      style={{ filter: "drop-shadow(0 20px 50px rgba(0,0,0,0.5))" }}
-                    />
+        {/* Scale */}
+        <div className="relative" style={{ width: "clamp(340px, 62vw, 700px)", aspectRatio: "16 / 11" }}>
+          {/* Base */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded" style={{ width: "28%", height: "2.8%", background: GOLD.bar, filter: "drop-shadow(0 4px 10px rgba(184,134,11,0.4))" }} />
 
-                    {/* Left plate — text */}
-                    <div className="absolute hero-line-top" style={{ left: "2%", bottom: "8%", maxWidth: "40%" }}>
-                      <span
-                        className="block font-accent font-bold leading-[1.1] tracking-tight text-white text-right"
-                        style={{
-                          fontSize: "clamp(1.1rem, 2.8vw, 2.4rem)",
-                          textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5)",
-                        }}
-                      >
-                        {slide.top}
-                      </span>
-                    </div>
+          {/* Pillar */}
+          <div className="absolute left-1/2 -translate-x-1/2 rounded-t-sm" style={{ bottom: "2.8%", width: "2%", height: "52%", background: GOLD.pillar, filter: "drop-shadow(2px 0 6px rgba(0,0,0,0.3))" }} />
 
-                    {/* Right plate — text */}
-                    <div className="absolute hero-line-bottom" style={{ right: "2%", top: "18%", maxWidth: "40%" }}>
-                      <span
-                        className="block font-accent font-bold leading-[1.1] tracking-tight text-left"
-                        style={{
-                          fontSize: "clamp(1.1rem, 2.8vw, 2.4rem)",
-                          background: "linear-gradient(135deg, #627A93, #8FA5B8, #627A93)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          filter: "drop-shadow(0 2px 20px rgba(98,122,147,0.3))",
-                        }}
-                      >
-                        {slide.bottom}
-                      </span>
-                    </div>
-                  </div>
+          {/* Finial */}
+          <div className="absolute left-1/2 z-[7]" style={{ top: "13%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "8px solid transparent", borderRight: "8px solid transparent", borderBottom: "12px solid #DAA520", filter: "drop-shadow(0 -2px 6px rgba(255,215,0,0.3))" }} />
 
-                  <p className="hero-slide-desc absolute bottom-[10%] left-1/2 -translate-x-1/2 max-w-lg text-center text-white/40 text-base md:text-lg leading-relaxed font-body">
-                    {slide.desc}
-                  </p>
+          {/* Pivot */}
+          <div className="absolute left-1/2 z-[8]" style={{ top: "17.5%", transform: "translate(-50%, -50%)", width: "clamp(18px, 3vw, 28px)", height: "clamp(18px, 3vw, 28px)", borderRadius: "50%", background: "radial-gradient(circle at 35% 35%, #FFF8DC, #FFD700 55%, #B8860B)", boxShadow: "0 0 20px rgba(255,215,0,0.4), 0 0 40px rgba(255,215,0,0.15), inset 0 -2px 4px rgba(0,0,0,0.2)" }} />
+
+          {/* ═══ ARM ═══ */}
+          <div ref={balArmRef} className="absolute z-[5]" style={{ top: "17.5%", left: "6%", right: "6%", height: "clamp(6px, 1vw, 10px)", borderRadius: "5px", transformOrigin: "50% 50%", background: GOLD.bar, filter: "drop-shadow(0 3px 8px rgba(0,0,0,0.4))", willChange: "transform" }}>
+
+            {/* ── Left ── */}
+            <div style={{ position: "absolute", left: 0, top: "100%", transform: "translateX(-50%)" }}>
+              <div ref={balLAsmRef} style={{ display: "flex", flexDirection: "column", alignItems: "center", transformOrigin: "top center", willChange: "transform" }}>
+                <div ref={balLChainRef} style={{ height: CH.long, filter: "drop-shadow(1px 2px 3px rgba(0,0,0,0.3))" }}>
+                  <ChainSVG />
                 </div>
-              )
-            }
-
-            return (
-              <div
-                key={i}
-                ref={(el) => { textRefs.current[i] = el }}
-                className="absolute inset-0 flex items-center justify-center px-6 md:px-12"
-              >
-                <div className="flex flex-col items-center gap-4 md:gap-5 max-w-3xl">
-                  <div ref={(el) => { slideDecoRefs.current[i] = el }} className="h-[1px] w-24 md:w-32 origin-center" style={{ background: "linear-gradient(90deg, transparent, #627A93, transparent)" }} />
-                  <div className="hero-slide-icon flex h-14 w-14 items-center justify-center rounded-2xl border border-royal/20 bg-royal/[0.08] mb-2">
-                    <SlideIcon className="h-6 w-6 text-royal" />
-                  </div>
-                  <span className="hero-line-top block font-accent font-bold leading-[1.08] tracking-tight text-white" style={{ fontSize: "clamp(2rem, 5.5vw, 6rem)", textShadow: "0 4px 40px rgba(0,0,0,0.6)" }}>
-                    {slide.top}
-                  </span>
-                  <div className="hero-deco h-[2px] w-12 md:w-20 rounded-full origin-center" style={{ background: "linear-gradient(90deg, transparent, #627A93, transparent)" }} />
-                  <span
-                    className="hero-line-bottom block font-accent font-bold leading-[1.08] tracking-tight"
-                    style={{
-                      fontSize: "clamp(2rem, 5.5vw, 6rem)",
-                      background: "linear-gradient(135deg, #627A93, #8FA5B8, #627A93)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      filter: "drop-shadow(0 4px 30px rgba(98,122,147,0.2))",
-                    }}
-                  >
-                    {slide.bottom}
-                  </span>
-                  <p className="hero-slide-desc mt-2 max-w-lg text-white/40 text-base md:text-lg leading-relaxed font-body">
-                    {slide.desc}
-                  </p>
+                <div style={plateStyle}>
+                  <div style={{ position: "absolute", top: "15%", left: "10%", right: "10%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,248,220,0.7), transparent)" }} />
+                </div>
+                <div style={textBoxStyle}>
+                  {BAL_STEPS.map((step, i) => (
+                    <div key={i} ref={(el) => { balLTexts.current[i] = el }} className="absolute inset-0 flex items-start justify-center" style={{ willChange: "transform, opacity" }}>
+                      <span className="text-center font-semibold leading-tight" style={{ color: "#FFF8DC", fontSize: "clamp(0.72rem, 1.2vw, 0.95rem)", textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>
+                        {step.left}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )
-          })}
+            </div>
+
+            {/* ── Right ── */}
+            <div style={{ position: "absolute", right: 0, top: "100%", transform: "translateX(50%)" }}>
+              <div ref={balRAsmRef} style={{ display: "flex", flexDirection: "column", alignItems: "center", transformOrigin: "top center", willChange: "transform" }}>
+                <div ref={balRChainRef} style={{ height: CH.short, filter: "drop-shadow(1px 2px 3px rgba(0,0,0,0.3))" }}>
+                  <ChainSVG />
+                </div>
+                <div style={plateStyle}>
+                  <div style={{ position: "absolute", top: "15%", left: "10%", right: "10%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,248,220,0.7), transparent)" }} />
+                </div>
+                <div style={textBoxStyle}>
+                  {BAL_STEPS.map((step, i) => (
+                    <div key={i} ref={(el) => { balRTexts.current[i] = el }} className="absolute inset-0 flex items-start justify-center" style={{ willChange: "transform, opacity" }}>
+                      <span className="text-center font-semibold leading-tight" style={{ color: "#FFF8DC", fontSize: "clamp(0.72rem, 1.2vw, 0.95rem)", textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>
+                        {step.right}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Step dots */}
+        <div className="absolute bottom-[14%] left-1/2 -translate-x-1/2 flex gap-3">
+          {BAL_STEPS.map((_, i) => (
+            <div key={i} ref={(el) => { balDots.current[i] = el }} className="rounded-full" style={{ width: 8, height: 8, backgroundColor: "rgba(255,215,0,0.2)", boxShadow: "0 0 8px rgba(255,215,0,0.15)" }} />
+          ))}
         </div>
       </div>
 
       {/* ══════════════════════════════════════════ */}
-      {/* SLIDE 5 — Split layout (text + card)       */}
+      {/* FINAL SLIDE — Split layout (text + card)   */}
       {/* ══════════════════════════════════════════ */}
       <div ref={lastSlideRef} className="absolute inset-0 z-10 flex items-center justify-center px-6 md:px-16 lg:px-24 opacity-0">
         <div className="flex w-full max-w-6xl flex-col items-center gap-10 lg:flex-row lg:gap-16">
