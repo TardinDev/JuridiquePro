@@ -10,10 +10,16 @@ gsap.registerPlugin(ScrollTrigger)
 
 const HERO_SLIDES = [
   {
-    top: "Droit des sociétés",
-    bottom: "& Création d'entreprise.",
-    desc: "SARL, SAS, SCI — nous structurons chaque étape de votre projet pour un lancement solide et pérenne.",
+    top: "Création de société",
+    bottom: "SARL, SAS, SASU, SA, SCI.",
+    desc: "Rédaction des statuts, dépôt du capital, annonce légale et immatriculation — votre société clé en main.",
     icon: Briefcase,
+  },
+  {
+    top: "Micro-entreprise",
+    bottom: "& Formalités INPI.",
+    desc: "Immatriculation, modification d'activité ou cessation — toutes vos démarches sur le guichet unique INPI.",
+    icon: FileText,
   },
   {
     top: "Contrats commerciaux",
@@ -24,10 +30,12 @@ const HERO_SLIDES = [
   {
     top: "Un accompagnement",
     bottom: "sur mesure.",
-    desc: "Chaque entreprise est unique. Notre expertise s'adapte à vos enjeux et à votre ambition.",
+    desc: "Société ou micro-entreprise, notre expertise s'adapte à vos enjeux et à votre ambition.",
     icon: Users,
   },
 ]
+
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
 const slideIn = (
   direction: "left" | "right" | "top" | "bottom",
@@ -43,24 +51,20 @@ const slideIn = (
   return {
     initial: { [axis]: value, opacity: 0 },
     animate: { [axis]: 0, opacity: 1 },
-    transition: {
-      duration,
-      delay,
-      ease: [0.22, 1, 0.36, 1],
-    },
+    transition: { duration, delay, ease: EASE },
   }
 }
 
 const scaleIn = (delay: number, duration = 0.8) => ({
   initial: { scale: 0.6, opacity: 0 },
   animate: { scale: 1, opacity: 1 },
-  transition: { duration, delay, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration, delay, ease: EASE },
 })
 
 const lineReveal = (delay: number) => ({
   initial: { scaleX: 0, originX: 0 },
   animate: { scaleX: 1 },
-  transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.8, delay, ease: EASE },
 })
 
 export function Hero() {
@@ -84,7 +88,7 @@ export function Hero() {
     const ctx = gsap.context(() => {
       const texts = textRefs.current.filter(Boolean) as HTMLDivElement[]
       const decos = slideDecoRefs.current.filter(Boolean) as HTMLDivElement[]
-      if (texts.length < 3) return
+      if (texts.length < 4) return
 
       gsap.set(texts, { yPercent: 80, opacity: 0, scale: 0.92 })
       gsap.set(decos, { scaleX: 0, opacity: 0 })
@@ -135,7 +139,7 @@ export function Hero() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=600%",
+          end: "+=750%",
           pin: true,
           scrub: 0.8,
           anticipatePin: 1,
@@ -190,10 +194,14 @@ export function Hero() {
           { yPercent: 0, opacity: 1, scale: 1, duration: 1, ease: "power3.out" },
           enterTime
         )
-        if (lineTop) tl.fromTo(lineTop, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + 0.1)
+        const balanceImg = text.querySelector(".hero-balance-img")
+        if (balanceImg) {
+          tl.fromTo(balanceImg, { scale: 0.6, opacity: 0, rotate: -8 }, { scale: 1, opacity: 1, rotate: 0, duration: 1.2, ease: "power3.out" }, enterTime + 0.1)
+        }
+        if (lineTop) tl.fromTo(lineTop, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + (balanceImg ? 0.4 : 0.1))
         if (decoLine) tl.fromTo(decoLine, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, enterTime + 0.3)
-        if (lineBottom) tl.fromTo(lineBottom, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + 0.2)
-        if (slideDesc) tl.fromTo(slideDesc, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, enterTime + 0.4)
+        if (lineBottom) tl.fromTo(lineBottom, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, enterTime + (balanceImg ? 0.6 : 0.2))
+        if (slideDesc) tl.fromTo(slideDesc, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, enterTime + (balanceImg ? 0.8 : 0.4))
         if (slideIcon) tl.fromTo(slideIcon, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, enterTime + 0.15)
         if (deco) tl.fromTo(deco, { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 0.6, duration: 0.8, ease: "power2.inOut" }, enterTime + 0.2)
 
@@ -201,7 +209,7 @@ export function Hero() {
         if (deco) tl.to(deco, { scaleX: 0, opacity: 0, duration: 0.5 }, exitTime)
       })
 
-      const finalEnter = 12
+      const finalEnter = 15
       tl.to(lastSlideRef.current, { opacity: 1, duration: 0.4 }, finalEnter)
         .fromTo(lastTextRef.current,
           { xPercent: -50, opacity: 0, filter: "blur(6px)" },
@@ -262,7 +270,7 @@ export function Hero() {
               >
                 <div className="h-1.5 w-1.5 rounded-full bg-royal animate-pulse" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-royal/90">
-                  Expert en droit des entreprises
+                  Sociétés & Micro-entreprises
                 </span>
               </motion.div>
 
@@ -296,7 +304,7 @@ export function Hero() {
                 {...slideIn("bottom", 0.7, 0.9)}
                 className="hero-desc mt-7 max-w-lg text-white/45 text-base md:text-lg leading-relaxed font-body"
               >
-                Accompagnement sur mesure pour la création et la croissance de votre entreprise. De la rédaction de statuts au conseil stratégique.
+                Création de société ou immatriculation de micro-entreprise — nous prenons en charge toutes vos formalités juridiques, de A à Z.
               </motion.p>
 
               <motion.div
@@ -318,8 +326,8 @@ export function Hero() {
 
               <div className="mt-10 flex flex-wrap gap-3">
                 {[
-                  { icon: ShieldCheck, label: "Protection juridique" },
-                  { icon: FileText, label: "Formalités simplifiées" },
+                  { icon: FileText, label: "Création de société" },
+                  { icon: Users, label: "Micro-entreprise & INPI" },
                   { icon: Scale, label: "Droit des sociétés" },
                 ].map(({ icon: Icon, label }, i) => (
                   <motion.div
@@ -375,6 +383,61 @@ export function Hero() {
         <div className="w-full text-center">
           {HERO_SLIDES.map((slide, i) => {
             const SlideIcon = slide.icon
+
+            if (i === 2) {
+              return (
+                <div
+                  key={i}
+                  ref={(el) => { textRefs.current[i] = el }}
+                  className="absolute inset-0 flex items-center justify-center px-6 md:px-12"
+                >
+                  <div ref={(el) => { slideDecoRefs.current[i] = el }} className="absolute top-[8%] left-1/2 -translate-x-1/2 h-[1px] w-24 md:w-32 origin-center" style={{ background: "linear-gradient(90deg, transparent, #627A93, transparent)" }} />
+
+                  <div className="relative w-full max-w-[700px] lg:max-w-[800px] mx-auto">
+                    <img
+                      src="/images/balance.jpeg"
+                      alt="Balance de la justice"
+                      className="hero-balance-img w-full h-auto object-contain"
+                      style={{ filter: "drop-shadow(0 20px 50px rgba(0,0,0,0.5))" }}
+                    />
+
+                    {/* Left plate — text */}
+                    <div className="absolute hero-line-top" style={{ left: "2%", bottom: "8%", maxWidth: "40%" }}>
+                      <span
+                        className="block font-accent font-bold leading-[1.1] tracking-tight text-white text-right"
+                        style={{
+                          fontSize: "clamp(1.1rem, 2.8vw, 2.4rem)",
+                          textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5)",
+                        }}
+                      >
+                        {slide.top}
+                      </span>
+                    </div>
+
+                    {/* Right plate — text */}
+                    <div className="absolute hero-line-bottom" style={{ right: "2%", top: "18%", maxWidth: "40%" }}>
+                      <span
+                        className="block font-accent font-bold leading-[1.1] tracking-tight text-left"
+                        style={{
+                          fontSize: "clamp(1.1rem, 2.8vw, 2.4rem)",
+                          background: "linear-gradient(135deg, #627A93, #8FA5B8, #627A93)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          filter: "drop-shadow(0 2px 20px rgba(98,122,147,0.3))",
+                        }}
+                      >
+                        {slide.bottom}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="hero-slide-desc absolute bottom-[10%] left-1/2 -translate-x-1/2 max-w-lg text-center text-white/40 text-base md:text-lg leading-relaxed font-body">
+                    {slide.desc}
+                  </p>
+                </div>
+              )
+            }
+
             return (
               <div
                 key={i}
@@ -433,7 +496,7 @@ export function Hero() {
                 construisons ensemble.
               </span>
               <p className="mt-4 max-w-md text-white/40 text-sm md:text-base leading-relaxed mx-auto lg:mx-0">
-                Première consultation gratuite et sans engagement. Nous étudions votre projet, identifions vos besoins et vous proposons un plan d'action clair.
+                Que vous lanciez une société ou une micro-entreprise, première consultation gratuite et sans engagement. Nous identifions vos besoins et vous proposons un plan d'action clair.
               </p>
             </div>
           </div>

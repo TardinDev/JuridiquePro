@@ -18,66 +18,66 @@ export interface Service {
 
 export const SERVICES: Service[] = [
   {
-    id: "creation",
-    title: "Cr\u00e9ation d'entreprise",
+    id: "creation-societe",
+    title: "Création de société",
     description:
-      "Accompagnement complet pour donner vie \u00e0 votre projet entrepreneurial, du choix du statut juridique \u00e0 l'immatriculation d\u00e9finitive.",
+      "De la rédaction des statuts à l'immatriculation définitive, nous créons votre société clé en main selon la forme juridique adaptée à votre projet.",
     icon: FileText,
     features: [
-      "Choix de la forme juridique",
-      "R\u00e9daction des statuts",
-      "Immatriculation compl\u00e8te",
-      "Accompagnement personnalis\u00e9",
+      "Rédaction des statuts sur mesure",
+      "SARL, SAS, SASU, SA, SCI",
+      "Dépôt du capital & immatriculation",
+      "Publication d'annonce légale",
     ],
   },
   {
-    id: "droit-entreprises",
-    title: "Droit des entreprises",
+    id: "micro-entreprise",
+    title: "Micro-entreprise",
     description:
-      "Expertise en droit des affaires pour s\u00e9curiser vos d\u00e9cisions strat\u00e9giques et prot\u00e9ger vos int\u00e9r\u00eats commerciaux.",
+      "Toutes les formalités liées à votre entreprise individuelle sur le guichet unique INPI : création, modification et cessation d'activité.",
+    icon: Users,
+    features: [
+      "Immatriculation sur l'INPI",
+      "Modification d'activité",
+      "Cessation d'activité",
+      "Conseil URSSAF & optimisation",
+    ],
+  },
+  {
+    id: "droit-societes",
+    title: "Droit des sociétés",
+    description:
+      "Expertise juridique pour sécuriser la vie de votre société : modifications statutaires, cessions, transformations et conformité réglementaire.",
     icon: Scale,
     features: [
-      "Analyse juridique",
-      "Optimisation fiscale",
-      "Conformit\u00e9 r\u00e9glementaire",
-      "Veille juridique",
+      "Modification de statuts",
+      "Transfert de siège social",
+      "Changement de dirigeant",
+      "Cession de parts & actions",
     ],
   },
   {
     id: "juridique-comptable",
-    title: "Juridique comptable",
+    title: "Formalités juridiques",
     description:
-      "Prise en charge compl\u00e8te de vos formalit\u00e9s administratives, comptables et juridiques d'entreprise.",
+      "Prise en charge complète de vos obligations légales et administratives pour sociétés et entreprises individuelles.",
     icon: ClipboardCheck,
     features: [
-      "Modification de statuts",
-      "Transfert de si\u00e8ge",
-      "Changement de dirigeant",
-      "Publication l\u00e9gale",
-    ],
-  },
-  {
-    id: "auto-entrepreneur",
-    title: "Auto-Entrepreneur",
-    description:
-      "Cr\u00e9ation de dossiers d'immatriculation et conseils pour optimiser votre statut de micro-entrepreneur.",
-    icon: Users,
-    features: [
-      "D\u00e9claration d'activit\u00e9",
-      "Optimisation du statut",
-      "Aide aux d\u00e9marches URSSAF",
-      "Suivi post-cr\u00e9ation",
+      "Approbation des comptes",
+      "Publication légale (JAL)",
+      "Dépôt au greffe",
+      "Déclaration des bénéficiaires effectifs",
     ],
   },
   {
     id: "gestion-admin",
     title: "Gestion Administrative",
     description:
-      "Support \u00e0 la gestion administrative et financi\u00e8re pour vous concentrer sur votre c\u0153ur de m\u00e9tier.",
+      "Support à la gestion administrative et financière pour vous concentrer sur votre cœur de métier.",
     icon: ShieldCheck,
     features: [
       "Gestion courrier",
-      "Suivi des \u00e9ch\u00e9ances",
+      "Suivi des échéances légales",
       "Organisation documentaire",
       "Tableaux de bord",
     ],
@@ -86,13 +86,13 @@ export const SERVICES: Service[] = [
     id: "suivi",
     title: "Suivi & Accompagnement",
     description:
-      "Un accompagnement continu apr\u00e8s la cr\u00e9ation pour assurer la p\u00e9rennit\u00e9 de votre activit\u00e9.",
+      "Un accompagnement continu après la création pour assurer la pérennité de votre activité, société comme micro-entreprise.",
     icon: HeadphonesIcon,
     features: [
-      "Point r\u00e9gulier",
-      "Mise \u00e0 jour des obligations",
-      "Conseil strat\u00e9gique",
-      "Support r\u00e9actif",
+      "Point régulier",
+      "Mise à jour des obligations",
+      "Conseil stratégique",
+      "Support réactif",
     ],
   },
 ]
@@ -187,34 +187,39 @@ export interface FaqItem {
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
-    question: "Quels sont les d\u00e9lais pour cr\u00e9er une entreprise ?",
+    question: "Quelle est la différence entre une entreprise et une société ?",
     answer:
-      "Les d\u00e9lais varient selon la forme juridique choisie. Pour une auto-entreprise, comptez 24 \u00e0 48h. Pour une soci\u00e9t\u00e9 (SARL, SAS), le processus prend g\u00e9n\u00e9ralement 1 \u00e0 2 semaines apr\u00e8s r\u00e9ception de tous les documents.",
+      "Une entreprise individuelle (micro-entreprise) est exploitée en nom propre par une seule personne, sans création de personne morale distincte. Une société (SARL, SAS, SASU, SA, SCI…) est une entité juridique à part entière avec ses propres statuts, un capital social et une responsabilité limitée aux apports. Nous vous accompagnons dans les deux cas.",
   },
   {
-    question: "Quel statut juridique choisir pour mon activit\u00e9 ?",
+    question: "Quels sont les délais pour créer une micro-entreprise ou une société ?",
     answer:
-      "Le choix d\u00e9pend de plusieurs crit\u00e8res : nature de l'activit\u00e9, chiffre d'affaires pr\u00e9visionnel, protection du patrimoine, r\u00e9gime fiscal souhait\u00e9. Lors de notre consultation gratuite, nous analysons votre situation pour vous recommander le statut le plus adapt\u00e9.",
+      "Pour une micro-entreprise, l'immatriculation sur le guichet unique de l'INPI se fait en 24 à 48h. Pour une société (SARL, SAS, SA…), comptez 1 à 2 semaines : rédaction des statuts, dépôt du capital, publication d'annonce légale et immatriculation au greffe.",
   },
   {
-    question: "Combien co\u00fbte la cr\u00e9ation d'une entreprise ?",
+    question: "Quelles formalités gérez-vous pour les micro-entreprises ?",
     answer:
-      "Les frais varient selon le type de structure. Nous proposons des forfaits transparents et sans surprise. Contactez-nous pour obtenir un devis personnalis\u00e9 gratuit.",
+      "Nous prenons en charge l'immatriculation de votre micro-entreprise sur l'INPI, la modification de votre activité (changement d'adresse, d'activité principale…) ainsi que la cessation d'activité. Nous vous conseillons également sur vos obligations URSSAF.",
+  },
+  {
+    question: "Quelles sont les formes de sociétés que vous créez ?",
+    answer:
+      "Nous créons toutes les formes de sociétés : SARL, SAS, SASU, SA, SCI, EURL, SNC, et bien d'autres. Cela inclut la rédaction des statuts sur mesure, le dépôt du capital social, la publication de l'annonce légale et l'immatriculation complète.",
+  },
+  {
+    question: "Combien coûte la création d'une entreprise ou d'une société ?",
+    answer:
+      "Les frais varient selon la structure. Une immatriculation de micro-entreprise est moins coûteuse qu'une création de société (qui implique rédaction de statuts, frais de greffe, annonce légale…). Nous proposons des forfaits transparents. Contactez-nous pour un devis gratuit.",
   },
   {
     question: "Intervenez-vous sur toute la France ?",
     answer:
-      "Oui, nous accompagnons des entrepreneurs partout en France. Avec nos bureaux \u00e0 V\u00e9nissieux (Lyon) et Nice, nous couvrons tout le territoire gr\u00e2ce \u00e0 nos outils digitaux.",
+      "Oui, nous accompagnons entrepreneurs et dirigeants de sociétés partout en France. Avec nos bureaux à Vénissieux (Lyon) et Nice, nous couvrons tout le territoire grâce à nos outils digitaux et au guichet unique INPI.",
   },
   {
-    question: "Proposez-vous un suivi apr\u00e8s la cr\u00e9ation ?",
+    question: "Proposez-vous un suivi après la création ?",
     answer:
-      "Absolument. Nous ne vous laissons pas seul apr\u00e8s la cr\u00e9ation. Nous assurons un suivi administratif continu, des conseils r\u00e9guliers et une veille sur vos obligations l\u00e9gales.",
-  },
-  {
-    question: "Quels documents dois-je fournir ?",
-    answer:
-      "Les documents n\u00e9cessaires varient selon le projet. En g\u00e9n\u00e9ral : pi\u00e8ce d'identit\u00e9, justificatif de domicile, et \u00e9l\u00e9ments sp\u00e9cifiques \u00e0 votre activit\u00e9. Nous vous guidons \u00e9tape par \u00e9tape.",
+      "Absolument. Que vous soyez micro-entrepreneur ou dirigeant de société, nous assurons un suivi continu : mise à jour de vos obligations, modifications statutaires, et conseil stratégique pour pérenniser votre activité.",
   },
 ]
 
