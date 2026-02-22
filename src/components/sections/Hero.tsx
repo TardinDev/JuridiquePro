@@ -196,6 +196,99 @@ export function Hero() {
       </section>
 
       {/* ══════════════════════════════════════════ */}
+      {/* 3 THÈMES — Ce que nous faisons              */}
+      {/* ══════════════════════════════════════════ */}
+      <section className="relative z-10 py-24 md:py-32">
+        <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          {/* Section title */}
+          <div className="text-center mb-16 md:mb-20">
+            <motion.span {...fadeUp(0)} className="text-[11px] font-semibold uppercase tracking-[0.35em] text-royal/60">
+              Nos expertises
+            </motion.span>
+            <motion.h2 {...fadeUp(0.1)} className="mt-4 font-accent font-bold text-white leading-[1.1]" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
+              Tout pour lancer et<br />
+              <span className="text-royal">sécuriser votre entreprise.</span>
+            </motion.h2>
+          </div>
+
+          {/* 3 Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            {/* Thème 1 — Création */}
+            <motion.div {...fadeUp(0)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
+                <FileText className="h-5 w-5 text-royal" />
+              </div>
+              <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Création d'entreprise</h3>
+              <p className="text-white/40 text-sm leading-relaxed mb-6">
+                De la rédaction des statuts à l'immatriculation définitive, nous créons votre structure clé en main.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "SARL, SAS, SASU, SCI",
+                  "Rédaction des statuts sur mesure",
+                  "Dépôt du capital & immatriculation",
+                  "Publication d'annonce légale",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
+                    <span className="text-white/55 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Thème 2 — Micro-entreprise */}
+            <motion.div {...fadeUp(0.15)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
+                <Users className="h-5 w-5 text-royal" />
+              </div>
+              <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Micro-entreprise & INPI</h3>
+              <p className="text-white/40 text-sm leading-relaxed mb-6">
+                Toutes les formalités liées à votre entreprise individuelle sur le guichet unique INPI.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Immatriculation sur l'INPI",
+                  "Modification d'activité",
+                  "Cessation d'activité",
+                  "Conseil URSSAF & optimisation",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
+                    <span className="text-white/55 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Thème 3 — Droit des sociétés */}
+            <motion.div {...fadeUp(0.3)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
+                <Scale className="h-5 w-5 text-royal" />
+              </div>
+              <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Droit des sociétés</h3>
+              <p className="text-white/40 text-sm leading-relaxed mb-6">
+                Expertise juridique pour sécuriser chaque étape de la vie de votre société.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Modification de statuts",
+                  "Transfert de siège social",
+                  "Cession de parts & actions",
+                  "Changement de dirigeant",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
+                    <span className="text-white/55 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════ */}
       {/* PRENONS CONTACT — apparaît au scroll       */}
       {/* ══════════════════════════════════════════ */}
       <section className="relative z-10 py-24 md:py-32 lg:py-40">
