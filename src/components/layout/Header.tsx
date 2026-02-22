@@ -6,7 +6,8 @@ import { MobileMenu } from "./MobileMenu"
 import { useNavigationStore } from "@/store/useNavigationStore"
 import { NAV_LINKS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
-import gsap from "gsap"
+import { gsap } from "gsap"
+import { MagneticButton } from "@/components/effects/MagneticButton"
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -86,31 +87,34 @@ export function Header() {
           {/* Navigation */}
           <nav ref={navRef} className="hidden items-center gap-1 lg:flex">
             {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={cn(
-                  "relative px-5 py-2 text-sm font-medium transition-colors duration-300 rounded-lg",
-                  location.pathname === link.href
-                    ? "text-white"
-                    : "text-white/70 hover:text-white hover:bg-white/5"
-                )}
-              >
-                {link.label}
-                {location.pathname === link.href && (
-                  <span className="absolute bottom-0 left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-royal" />
-                )}
-              </Link>
+              <MagneticButton key={link.href} strength={0.4}>
+                <Link
+                  to={link.href}
+                  className={cn(
+                    "relative block px-5 py-2 text-sm font-medium transition-colors duration-300 rounded-lg",
+                    location.pathname === link.href
+                      ? "text-white"
+                      : "text-white/70 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  {link.label}
+                  {location.pathname === link.href && (
+                    <span className="absolute bottom-0 left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-royal" />
+                  )}
+                </Link>
+              </MagneticButton>
             ))}
           </nav>
 
           {/* Actions */}
           <div ref={actionsRef} className="flex items-center gap-2">
-            <Link to="/contact" className="hidden lg:block">
-              <Button className="bg-royal hover:bg-royal-dark text-white rounded-full px-6 font-medium shadow-lg shadow-royal/20 transition-all hover:shadow-xl hover:shadow-royal/30">
-                Consultation gratuite
-              </Button>
-            </Link>
+            <MagneticButton className="hidden lg:block" strength={0.25}>
+              <Link to="/contact">
+                <Button className="bg-royal hover:bg-royal-dark text-white rounded-full px-6 font-medium shadow-lg shadow-royal/20 transition-all hover:shadow-xl hover:shadow-royal/30">
+                  Consultation gratuite
+                </Button>
+              </Link>
+            </MagneticButton>
 
             <button
               onClick={openMobileMenu}
