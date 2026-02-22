@@ -41,6 +41,10 @@ export function Hero() {
   const imageRef = useRef<HTMLDivElement>(null)
   const imageGlowRef = useRef<HTMLDivElement>(null)
 
+  const slide2Ref = useRef<HTMLDivElement>(null)
+  const slide3Ref = useRef<HTMLDivElement>(null)
+  const slide4Ref = useRef<HTMLDivElement>(null)
+
   const lastSlideRef = useRef<HTMLDivElement>(null)
   const lastTextRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -49,18 +53,20 @@ export function Hero() {
   const progressRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    let heroCompleted = false
-
     const ctx = gsap.context(() => {
-      // ── Initial states ──
-      gsap.set(lastSlideRef.current, { opacity: 0 })
-      gsap.set(lastTextRef.current, { xPercent: -50, opacity: 0 })
-      gsap.set(cardRef.current, { xPercent: 50, opacity: 0, rotateY: 20, scale: 0.9 })
-      gsap.set(ctaRef.current, { yPercent: 40, opacity: 0 })
+      const s2 = slide2Ref.current
+      const s3 = slide3Ref.current
+      const s4 = slide4Ref.current
+
+      // ── Initial states (all via GSAP inline styles) ──
+      gsap.set([s2, s3, s4].filter(Boolean), { autoAlpha: 0, y: 30 })
+      gsap.set(lastSlideRef.current, { autoAlpha: 0 })
+      gsap.set(lastTextRef.current, { xPercent: -40, autoAlpha: 0 })
+      gsap.set(cardRef.current, { xPercent: 40, autoAlpha: 0, rotateY: 15, scale: 0.9 })
+      gsap.set(ctaRef.current, { yPercent: 30, autoAlpha: 0 })
       gsap.set(progressRef.current, { scaleX: 0 })
 
-      // ── Ambient ──
-      gsap.to(imageRef.current, { y: -14, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1 })
+      // ── Ambient orbs ──
       const orbs = bgOrbsRef.current?.children
       if (orbs) {
         Array.from(orbs).forEach((orb, i) => {
@@ -75,49 +81,19 @@ export function Hero() {
       gsap.fromTo(scrollIndicatorRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, delay: 1.8, ease: "power3.out" })
 
       // ══════════════════════════════════════════
-      // RESET
-      // ══════════════════════════════════════════
-      // Grab mid-slides
-      const s2 = document.getElementById("slide2-content")
-      const s3 = document.getElementById("slide3-content")
-      const s4 = document.getElementById("slide4-content")
-      const midSlides = [s2, s3, s4].filter(Boolean) as HTMLElement[]
-
-      const resetToSlide1 = () => {
-        gsap.set(firstSlideRef.current, { xPercent: 0, opacity: 1, clearProps: "filter" })
-        gsap.set(imageRef.current, { y: 0, opacity: 1, scale: 1, clearProps: "filter" })
-        gsap.set(imageGlowRef.current, { opacity: 1, scale: 1, y: 0 })
-        gsap.set(scrollIndicatorRef.current, { opacity: 0 })
-
-        midSlides.forEach(el => gsap.set(el, { y: 40, opacity: 0, filter: "blur(6px)" }))
-
-        gsap.set(lastSlideRef.current, { opacity: 0 })
-        gsap.set(lastTextRef.current, { xPercent: -50, opacity: 0, clearProps: "filter" })
-        gsap.set(cardRef.current, { xPercent: 50, opacity: 0, rotateY: 20, scale: 0.9 })
-        gsap.set(ctaRef.current, { yPercent: 40, opacity: 0 })
-      }
-
-      // Init mid-slides
-      midSlides.forEach(el => gsap.set(el, { y: 40, opacity: 0, filter: "blur(6px)" }))
-
-      // ══════════════════════════════════════════
       // SCROLL TIMELINE
       // ══════════════════════════════════════════
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=700%",
+          end: "+=500%",
           pin: true,
-          scrub: 0.6,
+          scrub: 0.5,
           anticipatePin: 1,
           onUpdate: (self) => {
-            if (heroCompleted) { tl.progress(0); gsap.set(progressRef.current, { scaleX: 0 }); return }
             gsap.set(progressRef.current, { scaleX: self.progress })
           },
-          onLeave: () => { heroCompleted = true; tl.progress(0); resetToSlide1(); gsap.set(progressRef.current, { scaleX: 0 }) },
-          onEnterBack: () => { if (heroCompleted) { tl.progress(0); resetToSlide1() } },
-          onLeaveBack: () => { heroCompleted = false },
           onRefresh: (self) => {
             const sp = (self as any).spacer as HTMLElement | undefined
             if (sp) sp.style.backgroundColor = "#070b14"
@@ -129,70 +105,36 @@ export function Hero() {
       const sp = (tl.scrollTrigger as any)?.spacer as HTMLElement | undefined
       if (sp) sp.style.backgroundColor = "#070b14"
 
-      // ── Phase 0 — Scroll indicator fades ──
-      tl.to(scrollIndicatorRef.current, { opacity: 0, y: -10, duration: 0.3 }, 0)
+      // ── t 0 — Scroll indicator fades ──
+      tl.to(scrollIndicatorRef.current, { autoAlpha: 0, y: -10, duration: 0.3 }, 0)
 
-      // ── Phase 1 (t 0→1) — Slide 1 exits left ──
-      tl.to(firstSlideRef.current, { xPercent: -15, opacity: 0, filter: "blur(4px)", duration: 1, ease: "power2.in" }, 0)
+      // ── t 0→0.8 — Slide 1 exits ──
+      tl.to(firstSlideRef.current, { xPercent: -15, autoAlpha: 0, duration: 0.8, ease: "power2.in" }, 0)
+        .to(imageRef.current, { y: 50, scale: 0.95, duration: 0.8, ease: "power2.inOut" }, 0.3)
 
-      // ── Phase 2 (t 0.8→2) — Image shifts down slightly + Slide 2 enters ──
-      tl.to(imageRef.current, { y: 60, scale: 0.95, duration: 1.2, ease: "power2.inOut" }, 0.8)
-      tl.to(imageGlowRef.current, { y: 50, scale: 1.1, opacity: 0.9, duration: 1.2, ease: "power2.inOut" }, 0.8)
-      if (s2) {
-        tl.fromTo(s2,
-          { y: 40, opacity: 0, filter: "blur(6px)" },
-          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1, ease: "power3.out" },
-          1.2
-        )
-      }
+      // ── t 0.8→1.6 — Slide 2 enters ──
+      if (s2) tl.to(s2, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.8)
 
-      // ── Phase 3 (t 2.5→3.5) — Slide 2 exits, Slide 3 enters, image lowers more ──
-      if (s2) tl.to(s2, { y: -30, opacity: 0, filter: "blur(4px)", duration: 0.8, ease: "power2.in" }, 2.8)
-      tl.to(imageRef.current, { y: 120, scale: 0.9, duration: 1, ease: "power2.inOut" }, 3)
-      tl.to(imageGlowRef.current, { y: 100, scale: 1.15, opacity: 0.7, duration: 1, ease: "power2.inOut" }, 3)
-      if (s3) {
-        tl.fromTo(s3,
-          { y: 40, opacity: 0, filter: "blur(6px)" },
-          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1, ease: "power3.out" },
-          3.2
-        )
-      }
+      // ── t 1.8→2.6 — Slide 2 exits + Slide 3 enters ──
+      if (s2) tl.to(s2, { autoAlpha: 0, y: -25, duration: 0.6, ease: "power2.in" }, 1.8)
+      tl.to(imageRef.current, { y: 100, scale: 0.9, duration: 0.8, ease: "power2.inOut" }, 2)
+      if (s3) tl.to(s3, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, 2.2)
 
-      // ── Phase 4 (t 4.5→5.5) — Slide 3 exits, Slide 4 enters, image lowers more ──
-      if (s3) tl.to(s3, { y: -30, opacity: 0, filter: "blur(4px)", duration: 0.8, ease: "power2.in" }, 5)
-      tl.to(imageRef.current, { y: 180, scale: 0.85, duration: 1, ease: "power2.inOut" }, 5.2)
-      tl.to(imageGlowRef.current, { y: 150, opacity: 0.5, duration: 1, ease: "power2.inOut" }, 5.2)
-      if (s4) {
-        tl.fromTo(s4,
-          { y: 40, opacity: 0, filter: "blur(6px)" },
-          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1, ease: "power3.out" },
-          5.4
-        )
-      }
+      // ── t 3→3.8 — Slide 3 exits + Slide 4 enters ──
+      if (s3) tl.to(s3, { autoAlpha: 0, y: -25, duration: 0.6, ease: "power2.in" }, 3.2)
+      tl.to(imageRef.current, { y: 150, scale: 0.85, duration: 0.8, ease: "power2.inOut" }, 3.4)
+      if (s4) tl.to(s4, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, 3.6)
 
-      // ── Phase 5 (t 7→8) — Slide 4 + image exit together ──
-      if (s4) tl.to(s4, { y: -30, opacity: 0, filter: "blur(4px)", duration: 0.8, ease: "power2.in" }, 7.2)
-      tl.to(imageRef.current, { y: 350, opacity: 0, scale: 0.7, filter: "blur(8px)", duration: 1.2, ease: "power2.in" }, 7.2)
-      tl.to(imageGlowRef.current, { opacity: 0, scale: 1.5, duration: 1, ease: "power2.in" }, 7.2)
+      // ── t 4.4→5.2 — Slide 4 + image exit ──
+      if (s4) tl.to(s4, { autoAlpha: 0, y: -25, duration: 0.6, ease: "power2.in" }, 4.6)
+      tl.to(imageRef.current, { y: 300, autoAlpha: 0, scale: 0.7, duration: 1, ease: "power2.in" }, 4.6)
+      tl.to(imageGlowRef.current, { autoAlpha: 0, scale: 1.5, duration: 0.8 }, 4.6)
 
-      // ── Phase 6 (t 8.5) — Final slide enters immediately after ──
-      const fin = 8.5
-      tl.to(lastSlideRef.current, { opacity: 1, duration: 0.3 }, fin)
-        .fromTo(lastTextRef.current,
-          { xPercent: -40, opacity: 0, filter: "blur(6px)" },
-          { xPercent: 0, opacity: 1, filter: "blur(0px)", duration: 1.2, ease: "power3.out" },
-          fin
-        )
-        .fromTo(cardRef.current,
-          { xPercent: 40, opacity: 0, rotateY: 15, scale: 0.9 },
-          { xPercent: 0, opacity: 1, rotateY: 0, scale: 1, duration: 1.2, ease: "power3.out" },
-          fin + 0.15
-        )
-        .fromTo(ctaRef.current,
-          { yPercent: 30, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 0.8, ease: "back.out(1.2)" },
-          fin + 0.5
-        )
+      // ── t 5.5 — Final slide enters ──
+      tl.to(lastSlideRef.current, { autoAlpha: 1, duration: 0.3 }, 5.5)
+        .to(lastTextRef.current, { xPercent: 0, autoAlpha: 1, duration: 1, ease: "power3.out" }, 5.5)
+        .to(cardRef.current, { xPercent: 0, autoAlpha: 1, rotateY: 0, scale: 1, duration: 1, ease: "power3.out" }, 5.7)
+        .to(ctaRef.current, { yPercent: 0, autoAlpha: 1, duration: 0.8, ease: "back.out(1.2)" }, 5.9)
     }, sectionRef)
 
     return () => ctx.revert()
@@ -314,7 +256,7 @@ export function Hero() {
               </div>
 
               {/* SLIDE 2 — Création d'entreprise */}
-              <div id="slide2-content" className="absolute inset-0 flex flex-col justify-center opacity-0">
+              <div ref={slide2Ref} className="absolute inset-0 flex flex-col justify-center invisible">
                 <div className="max-w-xl">
                   <div className="inline-flex items-center justify-center p-3 rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
                     <FileText className="h-6 w-6 text-royal" />
@@ -329,7 +271,7 @@ export function Hero() {
               </div>
 
               {/* SLIDE 3 — Accompagnement */}
-              <div id="slide3-content" className="absolute inset-0 flex flex-col justify-center opacity-0">
+              <div ref={slide3Ref} className="absolute inset-0 flex flex-col justify-center invisible">
                 <div className="max-w-xl">
                   <div className="inline-flex items-center justify-center p-3 rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
                     <Shield className="h-6 w-6 text-royal" />
@@ -344,7 +286,7 @@ export function Hero() {
               </div>
 
               {/* SLIDE 4 — Simplicité */}
-              <div id="slide4-content" className="absolute inset-0 flex flex-col justify-center opacity-0">
+              <div ref={slide4Ref} className="absolute inset-0 flex flex-col justify-center invisible">
                 <div className="max-w-xl">
                   <div className="inline-flex items-center justify-center p-3 rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
                     <Briefcase className="h-6 w-6 text-royal" />
@@ -398,7 +340,7 @@ export function Hero() {
       {/* ══════════════════════════════════════════ */}
       {/* FINAL SLIDE — Split layout (text + card)   */}
       {/* ══════════════════════════════════════════ */}
-      <div ref={lastSlideRef} className="absolute inset-0 z-10 flex items-center justify-center px-6 md:px-16 lg:px-24 opacity-0">
+      <div ref={lastSlideRef} className="absolute inset-0 z-10 flex items-center justify-center px-6 md:px-16 lg:px-24 invisible">
         <div className="flex w-full max-w-6xl flex-col items-center gap-10 lg:flex-row lg:gap-16">
           <div ref={lastTextRef} className="flex-1 text-center lg:text-left">
             <div className="flex flex-col gap-3 md:gap-4">
