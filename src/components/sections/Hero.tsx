@@ -119,16 +119,15 @@ export function Hero() {
           onEnterBack: () => { if (heroCompleted) { tl.progress(0); resetToSlide1() } },
           onLeaveBack: () => { heroCompleted = false },
           onRefresh: (self) => {
-            if (self.spacer) {
-              (self.spacer as HTMLElement).style.backgroundColor = "#070b14"
-            }
+            const sp = (self as any).spacer as HTMLElement | undefined
+            if (sp) sp.style.backgroundColor = "#070b14"
           },
         },
       })
 
       // Style pin spacer immediately
-      const spacer = tl.scrollTrigger?.spacer
-      if (spacer) (spacer as HTMLElement).style.backgroundColor = "#070b14"
+      const sp = (tl.scrollTrigger as any)?.spacer as HTMLElement | undefined
+      if (sp) sp.style.backgroundColor = "#070b14"
 
       // ── Phase 0 — Scroll indicator fades ──
       tl.to(scrollIndicatorRef.current, { opacity: 0, y: -10, duration: 0.3 }, 0)
