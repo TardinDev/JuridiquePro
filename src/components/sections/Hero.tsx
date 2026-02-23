@@ -33,13 +33,6 @@ const lineReveal = (delay: number) => ({
   transition: { duration: 0.8, delay, ease: EASE },
 })
 
-const fadeUp = (delay: number, duration = 0.8) => ({
-  initial: { y: 40, opacity: 0 },
-  whileInView: { y: 0, opacity: 1 },
-  viewport: { once: true, margin: "-50px" },
-  transition: { duration, delay, ease: EASE },
-})
-
 const slideInView = (dir: "left" | "right" | "top" | "bottom", delay: number, duration = 1) => {
   const axis = dir === "left" || dir === "right" ? "x" : "y"
   const val = dir === "left" ? -80 : dir === "right" ? 80 : dir === "top" ? -50 : 50
@@ -79,7 +72,7 @@ export function Hero() {
       const cards = cardsRef.current.filter(Boolean)
 
       // Chaque carte apparaît depuis la gauche au scroll
-      cards.forEach((card, i) => {
+      cards.forEach((card) => {
         gsap.fromTo(
           card,
           { x: -120, opacity: 0 },
