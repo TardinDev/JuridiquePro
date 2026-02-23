@@ -98,6 +98,15 @@ export function Footer() {
             <Link to="#" className="transition-colors hover:text-white/60">Politique de confidentialité</Link>
           </div>
         </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-[11px] text-white/20">
+            Développé par{" "}
+            <a href="https://evoubap.com" target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-royal transition-colors">
+              evoubap.com
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   )
