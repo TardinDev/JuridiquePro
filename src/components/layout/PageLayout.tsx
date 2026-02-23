@@ -6,6 +6,7 @@ import { CustomCursor } from "@/components/effects/CustomCursor"
 import { ScrollProgress } from "@/components/effects/ScrollProgress"
 import { PageTransition } from "@/components/effects/PageTransition"
 import { useEffect } from "react"
+import { WhatsAppCard } from "@/components/effects/WhatsAppCard"
 
 export function PageLayout() {
   const { pathname } = useLocation()
@@ -15,16 +16,19 @@ export function PageLayout() {
   }, [pathname])
 
   return (
-    <SmoothScroll>
-      <CustomCursor />
-      <ScrollProgress />
-      <Header />
-      <main className="min-h-screen">
-        <PageTransition>
-          <Outlet />
-        </PageTransition>
-      </main>
-      <Footer />
-    </SmoothScroll>
+    <>
+      <SmoothScroll>
+        <CustomCursor />
+        <ScrollProgress />
+        <Header />
+        <main className="min-h-screen">
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
+        </main>
+        <Footer />
+      </SmoothScroll>
+      <WhatsAppCard />
+    </>
   )
 }

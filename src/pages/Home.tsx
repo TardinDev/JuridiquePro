@@ -5,7 +5,6 @@ import { Stats } from "@/components/sections/Stats"
 import { Testimonials } from "@/components/sections/Testimonials"
 import { FAQ } from "@/components/sections/FAQ"
 import { CTA } from "@/components/sections/CTA"
-import { WhatsAppCard } from "@/components/effects/WhatsAppCard"
 import { useSEO } from "@/hooks/useSEO"
 
 export default function Home() {
@@ -23,7 +22,6 @@ export default function Home() {
       <Testimonials />
       <FAQ />
       <CTA />
-      <WhatsAppCard />
     </div>
   )
 }
