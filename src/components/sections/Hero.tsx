@@ -234,9 +234,13 @@ export function Hero() {
                   transition={{ duration: 1.2, delay: 1.1, ease: EASE }}
                   className="absolute -inset-20 rounded-full border border-royal/[0.04]"
                 />
-                <div className="relative z-10">
+                <motion.div
+                  className="relative z-10"
+                  animate={{ y: [0, -12, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                >
                   <img src="/images/law.png" alt="Justice et droit" className="w-full max-w-[480px] xl:max-w-[540px] h-auto object-contain" style={{ filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.5)) drop-shadow(0 0 80px rgba(98,122,147,0.08))" }} />
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
