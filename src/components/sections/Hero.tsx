@@ -4,6 +4,9 @@ import { ArrowRight, Mail, Phone, MapPin, Scale, FileText, Users, BookOpen } fro
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+gsap.registerPlugin(ScrollTrigger)
 
 // ── Framer Motion helpers ─────────────────────────────────────
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
@@ -51,6 +54,8 @@ const slideInView = (dir: "left" | "right" | "top" | "bottom", delay: number, du
 // ══════════════════════════════════════════════════════════════
 export function Hero() {
   const bgOrbsRef = useRef<HTMLDivElement>(null)
+  const themesRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
     const orbs = bgOrbsRef.current?.children
@@ -64,6 +69,37 @@ export function Hero() {
         })
       })
     }
+  }, [])
+
+  // ScrollTrigger pour les 3 cartes
+  useEffect(() => {
+    if (!themesRef.current || cardsRef.current.length === 0) return
+
+    const ctx = gsap.context(() => {
+      const cards = cardsRef.current.filter(Boolean)
+
+      // Chaque carte apparaît depuis la gauche au scroll
+      cards.forEach((card, i) => {
+        gsap.fromTo(
+          card,
+          { x: -120, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              end: "top 50%",
+              scrub: 1,
+            },
+          }
+        )
+      })
+    }, themesRef)
+
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -216,92 +252,106 @@ export function Hero() {
       {/* ══════════════════════════════════════════ */}
       {/* 3 THÈMES — Ce que nous faisons              */}
       {/* ══════════════════════════════════════════ */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section ref={themesRef} className="relative z-10">
         <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
-          {/* Section title */}
-          <div className="text-center mb-16 md:mb-20">
-            <motion.span {...slideInView("top", 0, 0.9)} className="text-[11px] font-semibold uppercase tracking-[0.35em] text-royal/60">
-              Nos expertises
-            </motion.span>
-            <motion.h2 {...slideInView("left", 0.1, 1)} className="mt-4 font-accent font-bold text-white leading-[1.1]" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
-              Tout pour lancer et<br />
-              <span className="text-royal">sécuriser votre entreprise.</span>
-            </motion.h2>
-          </div>
-
-          {/* 3 Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-            {/* Thème 1 — Création */}
-            <motion.div {...slideInView("left", 0, 1)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
-                <FileText className="h-5 w-5 text-royal" />
+          <div className="flex flex-col lg:flex-row lg:gap-16 xl:gap-24">
+            {/* Left — Titre sticky */}
+            <div className="lg:w-[40%] py-24 md:py-32">
+              <div className="lg:sticky lg:top-[30vh]">
+                <motion.span {...slideInView("top", 0, 0.9)} className="text-[11px] font-semibold uppercase tracking-[0.35em] text-royal/60">
+                  Nos expertises
+                </motion.span>
+                <motion.h2 {...slideInView("left", 0.1, 1)} className="mt-4 font-accent font-bold text-white leading-[1.1]" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
+                  Tout pour lancer et<br />
+                  <span className="text-royal">sécuriser votre entreprise.</span>
+                </motion.h2>
+                <motion.div {...slideInView("left", 0.2, 0.8)} className="mt-6 h-[1px] w-20" style={{ background: "linear-gradient(90deg, #627A93, transparent)" }} />
               </div>
-              <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Création d'entreprise</h3>
-              <p className="text-white/40 text-sm leading-relaxed mb-6">
-                De la rédaction des statuts à l'immatriculation définitive, nous créons votre structure clé en main.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  "SARL, SAS, SASU, SCI",
-                  "Rédaction des statuts sur mesure",
-                  "Dépôt du capital & immatriculation",
-                  "Publication d'annonce légale",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
-                    <span className="text-white/55 text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+            </div>
 
-            {/* Thème 2 — Micro-entreprise */}
-            <motion.div {...slideInView("bottom", 0.15, 1)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
-                <Users className="h-5 w-5 text-royal" />
+            {/* Right — Cartes qui apparaissent au scroll depuis la gauche */}
+            <div className="lg:w-[60%] flex flex-col gap-8 lg:gap-10 py-24 md:py-32">
+              {/* Thème 1 — Création */}
+              <div
+                ref={(el) => { if (el) cardsRef.current[0] = el }}
+                className="opacity-0 group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-[border-color,background-color] duration-500 hover:border-royal/20 hover:bg-royal/[0.04]"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
+                  <FileText className="h-5 w-5 text-royal" />
+                </div>
+                <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Création d'entreprise</h3>
+                <p className="text-white/40 text-sm leading-relaxed mb-6">
+                  De la rédaction des statuts à l'immatriculation définitive, nous créons votre structure clé en main.
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    "SARL, SAS, SASU, SCI",
+                    "Rédaction des statuts sur mesure",
+                    "Dépôt du capital & immatriculation",
+                    "Publication d'annonce légale",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
+                      <span className="text-white/55 text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Micro-entreprise & INPI</h3>
-              <p className="text-white/40 text-sm leading-relaxed mb-6">
-                Toutes les formalités liées à votre entreprise individuelle sur le guichet unique INPI.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  "Immatriculation sur l'INPI",
-                  "Modification d'activité",
-                  "Cessation d'activité",
-                  "Conseil URSSAF & optimisation",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
-                    <span className="text-white/55 text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
 
-            {/* Thème 3 — Droit des sociétés */}
-            <motion.div {...slideInView("right", 0.3, 1)} className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-all duration-500 hover:border-royal/20 hover:bg-royal/[0.04]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
-                <Scale className="h-5 w-5 text-royal" />
+              {/* Thème 2 — Micro-entreprise */}
+              <div
+                ref={(el) => { if (el) cardsRef.current[1] = el }}
+                className="opacity-0 group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-[border-color,background-color] duration-500 hover:border-royal/20 hover:bg-royal/[0.04]"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
+                  <Users className="h-5 w-5 text-royal" />
+                </div>
+                <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Micro-entreprise & INPI</h3>
+                <p className="text-white/40 text-sm leading-relaxed mb-6">
+                  Toutes les formalités liées à votre entreprise individuelle sur le guichet unique INPI.
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    "Immatriculation sur l'INPI",
+                    "Modification d'activité",
+                    "Cessation d'activité",
+                    "Conseil URSSAF & optimisation",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
+                      <span className="text-white/55 text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Droit des sociétés</h3>
-              <p className="text-white/40 text-sm leading-relaxed mb-6">
-                Expertise juridique pour sécuriser chaque étape de la vie de votre société.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  "Modification de statuts",
-                  "Transfert de siège social",
-                  "Cession de parts & actions",
-                  "Changement de dirigeant",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
-                    <span className="text-white/55 text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+
+              {/* Thème 3 — Droit des sociétés */}
+              <div
+                ref={(el) => { if (el) cardsRef.current[2] = el }}
+                className="opacity-0 group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10 backdrop-blur-sm transition-[border-color,background-color] duration-500 hover:border-royal/20 hover:bg-royal/[0.04]"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-royal/[0.08] border border-royal/20 mb-6">
+                  <Scale className="h-5 w-5 text-royal" />
+                </div>
+                <h3 className="font-accent text-xl lg:text-2xl font-bold text-white mb-3">Droit des sociétés</h3>
+                <p className="text-white/40 text-sm leading-relaxed mb-6">
+                  Expertise juridique pour sécuriser chaque étape de la vie de votre société.
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    "Modification de statuts",
+                    "Transfert de siège social",
+                    "Cession de parts & actions",
+                    "Changement de dirigeant",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-royal/50 flex-shrink-0" />
+                      <span className="text-white/55 text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
