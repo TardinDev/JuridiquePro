@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react"
-import { X, Mail, Phone, MapPin } from "lucide-react"
+import { X, Phone, MapPin } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const IDLE_DELAY = 30_000 // 30 secondes sans activité
