@@ -258,8 +258,8 @@ export const COMPANY = {
   siren: "999 885 171",
   siret: "999 885 171 00010",
   ape: "8211Z",
-  email: "contact@juridiquepro.fr",
-  phone: "+33 6 00 00 00 00",
+  email: "oyaneclaudia@juridique.fr",
+  phone: "+33 7 58 74 56 23",
   tagline: "Votre vision. Notre protection juridique.",
   description:
     "Votre partenaire de confiance pour la cr\u00e9ation d'entreprise, les formalit\u00e9s juridiques et l'accompagnement administratif.",

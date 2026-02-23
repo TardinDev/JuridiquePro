@@ -182,7 +182,7 @@ export default function ContactPage() {
                       </Label>
                       <Input
                         id="phone"
-                        placeholder="+33 6 00 00 00 00"
+                        placeholder="+33 7 58 74 56 23"
                         className="rounded-xl"
                         {...register("phone")}
                       />
