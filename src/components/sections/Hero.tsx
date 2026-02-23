@@ -72,7 +72,7 @@ export function Hero() {
       const cards = cardsRef.current.filter(Boolean)
 
       // Chaque carte glisse depuis la gauche avec décalage progressif
-      cards.forEach((card, i) => {
+      cards.forEach((card) => {
         gsap.fromTo(
           card,
           { x: -200, opacity: 0, scale: 0.92, rotateY: 8 },
