@@ -126,7 +126,7 @@ export function WhatsAppCard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-accent text-[14px] font-semibold text-white leading-tight">Oyane Nze Clodia</p>
-                  <p className="text-[11px] text-white/35 mt-0.5">Fondatrice & Experte juridique</p>
+                  <p className="text-[11px] text-white/35 mt-0.5">Fondatrice & Experte en droit des sociétés</p>
                 </div>
               </div>
             </div>

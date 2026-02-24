@@ -403,7 +403,7 @@ export function Hero() {
                 </div>
                 <div className="mb-6">
                   <p className="font-accent text-lg font-semibold text-white">Oyane Nze Clodia</p>
-                  <p className="text-sm text-royal/70 mt-0.5">Fondatrice & Experte juridique</p>
+                  <p className="text-sm text-royal/70 mt-0.5">Fondatrice & Experte en droit des sociétés</p>
                 </div>
                 <div className="mb-6 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
                 <div className="space-y-3.5">
