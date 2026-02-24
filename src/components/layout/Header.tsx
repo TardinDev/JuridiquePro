@@ -14,6 +14,11 @@ export function Header() {
   const { openMobileMenu } = useNavigationStore()
   const location = useLocation()
 
+  // Homepage has a dark hero, all other pages have light backgrounds
+  const isDarkHero = location.pathname === "/"
+  // Use dark text when on a light page and not yet scrolled
+  const useDarkText = !isDarkHero && !isScrolled
+
   const headerRef = useRef<HTMLElement>(null)
   const logoRef = useRef<HTMLAnchorElement>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -79,7 +84,10 @@ export function Header() {
             to="/"
             className="group flex items-center gap-3 transition-opacity hover:opacity-90"
           >
-            <span className="font-accent text-2xl font-bold leading-none tracking-tight text-white">
+            <span className={cn(
+              "font-accent text-2xl font-bold leading-none tracking-tight transition-colors duration-300",
+              useDarkText ? "text-foreground" : "text-white"
+            )}>
               Juridique <span className="text-royal">Pro</span>
             </span>
           </Link>
@@ -93,8 +101,10 @@ export function Header() {
                   className={cn(
                     "relative block px-5 py-2 text-sm font-medium transition-colors duration-300 rounded-lg",
                     location.pathname === link.href
-                      ? "text-white"
-                      : "text-white/70 hover:text-white hover:bg-white/5"
+                      ? useDarkText ? "text-foreground" : "text-white"
+                      : useDarkText
+                        ? "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+                        : "text-white/70 hover:text-white hover:bg-white/5"
                   )}
                 >
                   {link.label}
@@ -118,7 +128,10 @@ export function Header() {
 
             <button
               onClick={openMobileMenu}
-              className="flex h-9 w-9 items-center justify-center rounded-xl lg:hidden transition-colors duration-300 text-white"
+              className={cn(
+                "flex h-9 w-9 items-center justify-center rounded-xl lg:hidden transition-colors duration-300",
+                useDarkText ? "text-foreground" : "text-white"
+              )}
               aria-label="Menu"
             >
               <Menu className="h-5 w-5" />
