@@ -16,7 +16,7 @@ export default function ServicesPage() {
   useSEO({
     title: "Services",
     description:
-      "Découvrez nos services : création d'entreprise, auto-entrepreneur, conseils juridiques, formalités, gestion administrative et suivi.",
+      "Découvrez nos services : création d'entreprise, micro-entrepreneur, domiciliation, comptabilité, modification de statuts, gestion administrative et suivi.",
   })
 
   const heroRef = useRef<HTMLElement>(null)
@@ -93,6 +93,17 @@ export default function ServicesPage() {
                         <h3 className="font-heading text-2xl font-bold text-foreground">
                           {service.title}
                         </h3>
+                        {service.startingPrice && (
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            À partir de{" "}
+                            <span className="font-semibold text-royal">
+                              {service.startingPrice} € HT
+                            </span>
+                            {service.id === "domiciliation" || service.id === "comptabilite" || service.id === "gestion-admin"
+                              ? "/mois"
+                              : ""}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -118,14 +129,23 @@ export default function ServicesPage() {
                       ))}
                     </ul>
 
-                    <MagneticButton className="inline-block">
-                      <Link to="/contact">
-                        <Button className="group rounded-full bg-gradient-to-r from-royal to-royal-dark px-6 text-white shadow-lg shadow-royal/20 hover:shadow-xl hover:shadow-royal/30 transition-all">
-                          Demander un devis
-                          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                        </Button>
-                      </Link>
-                    </MagneticButton>
+                    <div className="flex flex-wrap gap-3">
+                      <MagneticButton className="inline-block">
+                        <Link to="/contact">
+                          <Button className="group rounded-full bg-gradient-to-r from-royal to-royal-dark px-6 text-white shadow-lg shadow-royal/20 hover:shadow-xl hover:shadow-royal/30 transition-all">
+                            Demander un devis
+                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                          </Button>
+                        </Link>
+                      </MagneticButton>
+                      {service.startingPrice && (
+                        <Link to="/tarifs">
+                          <Button variant="outline" className="rounded-full border-royal/30 text-royal hover:bg-royal/5">
+                            Voir les tarifs
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               )

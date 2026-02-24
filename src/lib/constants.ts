@@ -5,15 +5,21 @@ import {
   ClipboardCheck,
   ShieldCheck,
   HeadphonesIcon,
+  Building2,
+  Briefcase,
+  Receipt,
+  MapPin,
   type LucideIcon,
 } from "lucide-react"
 
+// ── Services (existants enrichis) ────────────────────────────
 export interface Service {
   id: string
   title: string
   description: string
   icon: LucideIcon
   features: string[]
+  startingPrice?: string
 }
 
 export const SERVICES: Service[] = [
@@ -25,10 +31,13 @@ export const SERVICES: Service[] = [
     icon: FileText,
     features: [
       "Rédaction des statuts sur mesure",
-      "SARL, SAS, SASU, SA, SCI",
+      "SARL, SAS, SASU, SA, SCI, EURL",
       "Dépôt du capital & immatriculation",
       "Publication d'annonce légale",
+      "Immatriculation au Guichet Unique",
+      "Garantie anti-rejet du greffe",
     ],
+    startingPrice: "0",
   },
   {
     id: "micro-entreprise",
@@ -37,11 +46,14 @@ export const SERVICES: Service[] = [
       "Toutes les formalités liées à votre entreprise individuelle sur le guichet unique INPI : création, modification et cessation d'activité.",
     icon: Users,
     features: [
+      "Déclaration d'activité complète",
       "Immatriculation sur l'INPI",
+      "Obtention Kbis et SIRET",
       "Modification d'activité",
       "Cessation d'activité",
       "Conseil URSSAF & optimisation",
     ],
+    startingPrice: "59",
   },
   {
     id: "droit-societes",
@@ -54,10 +66,13 @@ export const SERVICES: Service[] = [
       "Transfert de siège social",
       "Changement de dirigeant",
       "Cession de parts & actions",
+      "Transformation de société",
+      "Augmentation de capital",
     ],
+    startingPrice: "59",
   },
   {
-    id: "juridique-comptable",
+    id: "formalites-juridiques",
     title: "Formalités juridiques",
     description:
       "Prise en charge complète de vos obligations légales et administratives pour sociétés et entreprises individuelles.",
@@ -67,7 +82,26 @@ export const SERVICES: Service[] = [
       "Publication légale (JAL)",
       "Dépôt au greffe",
       "Déclaration des bénéficiaires effectifs",
+      "Dissolution & liquidation",
+      "Radiation d'entreprise",
     ],
+    startingPrice: "59",
+  },
+  {
+    id: "domiciliation",
+    title: "Domiciliation commerciale",
+    description:
+      "Une adresse professionnelle prestigieuse pour le siège social de votre entreprise, avec gestion du courrier et services associés.",
+    icon: MapPin,
+    features: [
+      "Adresse de siège social",
+      "Réexpédition du courrier",
+      "Numérisation des documents",
+      "Salle de réunion sur demande",
+      "Disponible pour toutes formes juridiques",
+      "Adresses à Lyon & Nice",
+    ],
+    startingPrice: "19",
   },
   {
     id: "gestion-admin",
@@ -80,7 +114,26 @@ export const SERVICES: Service[] = [
       "Suivi des échéances légales",
       "Organisation documentaire",
       "Tableaux de bord",
+      "Veille réglementaire",
+      "Archivage numérique",
     ],
+    startingPrice: "29",
+  },
+  {
+    id: "comptabilite",
+    title: "Comptabilité",
+    description:
+      "Service comptable complet pour votre entreprise : tenue des comptes, déclarations fiscales et bilans annuels par des experts dédiés.",
+    icon: Receipt,
+    features: [
+      "Tenue de la comptabilité",
+      "Déclarations fiscales (TVA, IS, IR)",
+      "Bilan & compte de résultat",
+      "Logiciel de facturation inclus",
+      "Expert-comptable dédié",
+      "Tableau de bord financier",
+    ],
+    startingPrice: "39",
   },
   {
     id: "suivi",
@@ -93,10 +146,334 @@ export const SERVICES: Service[] = [
       "Mise à jour des obligations",
       "Conseil stratégique",
       "Support réactif",
+      "Assistance téléphonique",
+      "Accompagnement personnalisé",
     ],
   },
 ]
 
+// ── Pricing ──────────────────────────────────────────────────
+export interface PricingPlan {
+  name: string
+  price: string
+  suffix?: string
+  description: string
+  features: string[]
+  highlighted?: boolean
+  badge?: string
+  cta: string
+}
+
+export interface PricingCategory {
+  id: string
+  title: string
+  subtitle: string
+  icon: LucideIcon
+  adminFees?: string
+  plans: PricingPlan[]
+}
+
+export const PRICING_CATEGORIES: PricingCategory[] = [
+  {
+    id: "creation-societe",
+    title: "Création de société",
+    subtitle: "SASU, EURL, SAS, SARL, SCI",
+    icon: FileText,
+    adminFees: "Frais administratifs (greffe + annonce légale) : ~190 € en sus",
+    plans: [
+      {
+        name: "Basique",
+        price: "0",
+        suffix: "HT",
+        description: "L'essentiel pour créer votre société vous-même",
+        features: [
+          "Génération des statuts",
+          "Dossier complet",
+          "Publication annonce légale",
+          "Immatriculation Guichet Unique",
+          "Garantie anti-rejet du greffe",
+          "Accompagnement jusqu'au Kbis",
+        ],
+        cta: "Choisir",
+      },
+      {
+        name: "Standard",
+        price: "99",
+        suffix: "HT",
+        description: "Délégation complète avec un spécialiste dédié",
+        features: [
+          "Génération des statuts",
+          "Dossier complet",
+          "Publication annonce légale",
+          "Immatriculation Guichet Unique",
+          "Garantie anti-rejet du greffe",
+          "Accompagnement jusqu'au Kbis",
+          "RDV avec spécialiste dédié",
+          "Délégation complète du dossier",
+        ],
+        highlighted: true,
+        badge: "Recommandé",
+        cta: "Choisir",
+      },
+      {
+        name: "Express",
+        price: "199",
+        suffix: "HT",
+        description: "Traitement prioritaire en 24h avec assistance illimitée",
+        features: [
+          "Génération des statuts",
+          "Dossier complet",
+          "Publication annonce légale",
+          "Immatriculation Guichet Unique",
+          "Garantie anti-rejet du greffe",
+          "Accompagnement jusqu'au Kbis",
+          "RDV avec spécialiste dédié",
+          "Délégation complète du dossier",
+          "Traitement prioritaire 24h",
+          "Assistance illimitée (tél, mail, chat)",
+        ],
+        cta: "Choisir",
+      },
+    ],
+  },
+  {
+    id: "micro-entreprise",
+    title: "Création micro-entreprise",
+    subtitle: "Auto-entrepreneur & entreprise individuelle",
+    icon: Users,
+    plans: [
+      {
+        name: "Standard",
+        price: "59",
+        suffix: "HT",
+        description: "Immatriculation complète de votre micro-entreprise",
+        features: [
+          "Déclaration d'activité complète",
+          "Dossier juridique complet",
+          "Immatriculation Guichet Unique",
+          "Garantie anti-rejet",
+          "Obtention Kbis et SIRET",
+        ],
+        cta: "Choisir",
+      },
+      {
+        name: "Express",
+        price: "99",
+        suffix: "HT",
+        description: "Création accélérée avec obtention ACRE",
+        features: [
+          "Déclaration d'activité complète",
+          "Dossier juridique complet",
+          "Immatriculation Guichet Unique",
+          "Garantie anti-rejet",
+          "Obtention Kbis et SIRET",
+          "Traitement express 24h",
+          "Assistance illimitée",
+          "Obtention ACRE",
+        ],
+        highlighted: true,
+        badge: "Populaire",
+        cta: "Choisir",
+      },
+    ],
+  },
+  {
+    id: "modification-statuts",
+    title: "Modification de statuts",
+    subtitle: "Changements juridiques pour votre société",
+    icon: Scale,
+    adminFees: "Frais de greffe et annonce légale en sus selon la modification",
+    plans: [
+      {
+        name: "Changement de dirigeant",
+        price: "59",
+        suffix: "HT",
+        description: "Modification de la direction de votre société",
+        features: [
+          "Rédaction du PV d'assemblée",
+          "Mise à jour des statuts",
+          "Publication annonce légale",
+          "Dépôt au greffe",
+          "Accompagnement spécialiste",
+        ],
+        cta: "Choisir",
+      },
+      {
+        name: "Transfert de siège",
+        price: "79",
+        suffix: "HT",
+        description: "Changement d'adresse du siège social",
+        features: [
+          "Rédaction du PV d'assemblée",
+          "Mise à jour des statuts",
+          "Publication annonce légale",
+          "Dépôt au greffe",
+          "Radiation ancien greffe si besoin",
+          "Accompagnement spécialiste",
+        ],
+        highlighted: true,
+        badge: "Populaire",
+        cta: "Choisir",
+      },
+      {
+        name: "Cession de parts",
+        price: "99",
+        suffix: "HT",
+        description: "Transfert de parts sociales ou actions",
+        features: [
+          "Rédaction acte de cession",
+          "Mise à jour des statuts",
+          "PV d'assemblée",
+          "Enregistrement aux impôts",
+          "Dépôt au greffe",
+          "Publication annonce légale",
+          "Accompagnement complet",
+        ],
+        cta: "Choisir",
+      },
+    ],
+  },
+  {
+    id: "domiciliation",
+    title: "Domiciliation commerciale",
+    subtitle: "Adresse professionnelle à Lyon ou Nice",
+    icon: MapPin,
+    plans: [
+      {
+        name: "Micro-entreprise",
+        price: "19",
+        suffix: "HT/mois",
+        description: "Adresse professionnelle pour auto-entrepreneurs",
+        features: [
+          "Adresse de siège social",
+          "Réexpédition courrier 1x/semaine",
+          "Numérisation sur demande",
+          "Attestation de domiciliation",
+          "Sans engagement (préavis 1 mois)",
+        ],
+        cta: "Choisir",
+      },
+      {
+        name: "Société",
+        price: "29",
+        suffix: "HT/mois",
+        description: "Domiciliation complète pour sociétés",
+        features: [
+          "Adresse de siège social",
+          "Réexpédition courrier 2x/semaine",
+          "Numérisation automatique",
+          "Attestation de domiciliation",
+          "Salle de réunion (2h/mois)",
+          "Ligne téléphonique dédiée",
+          "Sans engagement (préavis 1 mois)",
+        ],
+        highlighted: true,
+        badge: "Recommandé",
+        cta: "Choisir",
+      },
+    ],
+  },
+  {
+    id: "comptabilite",
+    title: "Comptabilité",
+    subtitle: "Gestion comptable et fiscale pour votre entreprise",
+    icon: Receipt,
+    plans: [
+      {
+        name: "Essentiel",
+        price: "39",
+        suffix: "HT/mois",
+        description: "Comptabilité de base pour les petites structures",
+        features: [
+          "Tenue de la comptabilité",
+          "Déclarations de TVA",
+          "Bilan & compte de résultat",
+          "Logiciel de facturation inclus",
+          "Tableau de bord financier",
+        ],
+        cta: "Choisir",
+      },
+      {
+        name: "Premium",
+        price: "69",
+        suffix: "HT/mois",
+        description: "Comptabilité complète avec expert dédié",
+        features: [
+          "Tenue de la comptabilité",
+          "Déclarations de TVA",
+          "Bilan & compte de résultat",
+          "Logiciel de facturation inclus",
+          "Tableau de bord financier",
+          "Expert-comptable dédié",
+          "Déclarations fiscales (IS, IR)",
+          "Conseil optimisation fiscale",
+          "Assistance illimitée",
+        ],
+        highlighted: true,
+        badge: "Recommandé",
+        cta: "Choisir",
+      },
+    ],
+  },
+  {
+    id: "dissolution",
+    title: "Dissolution & fermeture",
+    subtitle: "Fermeture de votre société en toute conformité",
+    icon: ClipboardCheck,
+    plans: [
+      {
+        name: "Dissolution",
+        price: "59",
+        suffix: "HT",
+        description: "Dissolution de votre société",
+        features: [
+          "Rédaction PV de dissolution",
+          "Publication annonce légale",
+          "Dépôt au greffe",
+          "Accompagnement spécialiste",
+        ],
+        cta: "Choisir",
+      },
+      {
+        name: "Dissolution + Liquidation",
+        price: "149",
+        suffix: "HT",
+        description: "Dissolution et liquidation complètes",
+        features: [
+          "Rédaction PV de dissolution",
+          "Publication annonce légale dissolution",
+          "Comptes de liquidation",
+          "Publication annonce légale liquidation",
+          "Radiation au greffe",
+          "Accompagnement complet",
+          "Assistance illimitée",
+        ],
+        highlighted: true,
+        badge: "Complet",
+        cta: "Choisir",
+      },
+    ],
+  },
+]
+
+// ── Services complémentaires (affichés séparément) ───────────
+export interface ComplementaryService {
+  title: string
+  price: string
+  suffix?: string
+  icon: LucideIcon
+}
+
+export const COMPLEMENTARY_SERVICES: ComplementaryService[] = [
+  { title: "Approbation des comptes", price: "49", suffix: "HT", icon: ClipboardCheck },
+  { title: "Publication légale (JAL)", price: "149", suffix: "HT", icon: FileText },
+  { title: "Dépôt de capital social", price: "0", suffix: "HT", icon: Building2 },
+  { title: "Déclaration bénéficiaires effectifs", price: "29", suffix: "HT", icon: ShieldCheck },
+  { title: "Contrat de travail (CDI/CDD)", price: "49", suffix: "HT", icon: Briefcase },
+  { title: "Conditions générales de vente", price: "39", suffix: "HT", icon: FileText },
+]
+
+// ── Process Steps ────────────────────────────────────────────
 export interface ProcessStep {
   number: string
   title: string
@@ -108,28 +485,29 @@ export const PROCESS_STEPS: ProcessStep[] = [
     number: "01",
     title: "Consultation Gratuite",
     description:
-      "\u00c9change approfondi sur votre projet, vos objectifs et votre situation pour d\u00e9finir la meilleure strat\u00e9gie.",
+      "Échange approfondi sur votre projet, vos objectifs et votre situation pour définir la meilleure stratégie.",
   },
   {
     number: "02",
-    title: "\u00c9tude Personnalis\u00e9e",
+    title: "Étude Personnalisée",
     description:
-      "Analyse compl\u00e8te de votre dossier et \u00e9laboration d'un plan d'action sur mesure adapt\u00e9 \u00e0 vos besoins.",
+      "Analyse complète de votre dossier et élaboration d'un plan d'action sur mesure adapté à vos besoins.",
   },
   {
     number: "03",
-    title: "R\u00e9alisation & Formalit\u00e9s",
+    title: "Réalisation & Formalités",
     description:
-      "Prise en charge int\u00e9grale des d\u00e9marches administratives et juridiques n\u00e9cessaires \u00e0 votre projet.",
+      "Prise en charge intégrale des démarches administratives et juridiques nécessaires à votre projet.",
   },
   {
     number: "04",
     title: "Suivi Continu",
     description:
-      "Accompagnement post-cr\u00e9ation avec un suivi r\u00e9gulier pour garantir la r\u00e9ussite de votre activit\u00e9.",
+      "Accompagnement post-création avec un suivi régulier pour garantir la réussite de votre activité.",
   },
 ]
 
+// ── Stats ────────────────────────────────────────────────────
 export interface Stat {
   value: string
   suffix: string
@@ -137,11 +515,12 @@ export interface Stat {
 }
 
 export const STATS: Stat[] = [
-  { value: "15", suffix: "", label: "ans d'exp\u00e9rience" },
-  { value: "500", suffix: "+", label: "entreprises cr\u00e9\u00e9es" },
+  { value: "15", suffix: "", label: "ans d'expérience" },
+  { value: "500", suffix: "+", label: "entreprises créées" },
   { value: "98", suffix: "%", label: "de satisfaction" },
 ]
 
+// ── Testimonials ─────────────────────────────────────────────
 export interface Testimonial {
   name: string
   role: string
@@ -152,34 +531,35 @@ export interface Testimonial {
 export const TESTIMONIALS: Testimonial[] = [
   {
     name: "Sophie Martin",
-    role: "Fondatrice, Atelier Cr\u00e9atif",
+    role: "Fondatrice, Atelier Créatif",
     content:
-      "Gr\u00e2ce \u00e0 ce cabinet, j'ai pu cr\u00e9er mon entreprise en toute s\u00e9r\u00e9nit\u00e9. Un accompagnement exemplaire du d\u00e9but \u00e0 la fin.",
+      "Grâce à ce cabinet, j'ai pu créer mon entreprise en toute sérénité. Un accompagnement exemplaire du début à la fin.",
     rating: 5,
   },
   {
     name: "Karim Benali",
-    role: "G\u00e9rant, KB Consulting",
+    role: "Gérant, KB Consulting",
     content:
-      "Le professionnalisme et la r\u00e9activit\u00e9 sont remarquables. Toutes mes formalit\u00e9s ont \u00e9t\u00e9 g\u00e9r\u00e9es en un temps record.",
+      "Le professionnalisme et la réactivité sont remarquables. Toutes mes formalités ont été gérées en un temps record.",
     rating: 5,
   },
   {
     name: "Marie Dupont",
     role: "Auto-Entrepreneuse",
     content:
-      "Je recommande vivement ! Les conseils juridiques m'ont permis d'optimiser mon statut et de d\u00e9marrer dans les meilleures conditions.",
+      "Je recommande vivement ! Les conseils juridiques m'ont permis d'optimiser mon statut et de démarrer dans les meilleures conditions.",
     rating: 5,
   },
   {
     name: "Thomas Laurent",
     role: "Co-fondateur, TechStart",
     content:
-      "Un vrai gain de temps et d'\u00e9nergie. La partie administrative a \u00e9t\u00e9 prise en charge pour que je me concentre sur mon business.",
+      "Un vrai gain de temps et d'énergie. La partie administrative a été prise en charge pour que je me concentre sur mon business.",
     rating: 5,
   },
 ]
 
+// ── FAQ ──────────────────────────────────────────────────────
 export interface FaqItem {
   question: string
   answer: string
@@ -207,9 +587,9 @@ export const FAQ_ITEMS: FaqItem[] = [
       "Nous créons toutes les formes de sociétés : SARL, SAS, SASU, SA, SCI, EURL, SNC, et bien d'autres. Cela inclut la rédaction des statuts sur mesure, le dépôt du capital social, la publication de l'annonce légale et l'immatriculation complète.",
   },
   {
-    question: "Combien coûte la création d'une entreprise ou d'une société ?",
+    question: "Combien coûte la création d'une entreprise ?",
     answer:
-      "Les frais varient selon la structure. Une immatriculation de micro-entreprise est moins coûteuse qu'une création de société (qui implique rédaction de statuts, frais de greffe, annonce légale…). Nous proposons des forfaits transparents. Contactez-nous pour un devis gratuit.",
+      "La création de société commence dès 0 € HT (hors frais administratifs d'environ 190 €). La micro-entreprise est à partir de 59 € HT. Nous proposons des forfaits transparents : Basique, Standard et Express selon le niveau d'accompagnement souhaité. Consultez notre page tarifs pour plus de détails.",
   },
   {
     question: "Intervenez-vous sur toute la France ?",
@@ -219,10 +599,16 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Proposez-vous un suivi après la création ?",
     answer:
-      "Absolument. Que vous soyez micro-entrepreneur ou dirigeant de société, nous assurons un suivi continu : mise à jour de vos obligations, modifications statutaires, et conseil stratégique pour pérenniser votre activité.",
+      "Absolument. Que vous soyez micro-entrepreneur ou dirigeant de société, nous assurons un suivi continu : mise à jour de vos obligations, modifications statutaires, comptabilité et conseil stratégique pour pérenniser votre activité.",
+  },
+  {
+    question: "Proposez-vous la domiciliation commerciale ?",
+    answer:
+      "Oui, nous proposons des adresses de domiciliation à Lyon et Nice à partir de 19 € HT/mois pour les micro-entreprises et 29 € HT/mois pour les sociétés. Ce service inclut la réexpédition du courrier, la numérisation des documents et une attestation de domiciliation.",
   },
 ]
 
+// ── Locations ────────────────────────────────────────────────
 export interface Location {
   city: string
   address: string
@@ -232,35 +618,40 @@ export interface Location {
 
 export const LOCATIONS: Location[] = [
   {
-    city: "Lyon - V\u00e9nissieux",
+    city: "Lyon - Vénissieux",
     address: "37 Avenue Jean Cagne",
-    postalCode: "69200 V\u00e9nissieux",
-    description: "Si\u00e8ge social \u2014 R\u00e9gion Auvergne-Rh\u00f4ne-Alpes",
+    postalCode: "69200 Vénissieux",
+    description: "Siège social — Région Auvergne-Rhône-Alpes",
   },
   {
     city: "Nice",
     address: "13 Avenue Cagnoli",
     postalCode: "06100 Nice",
-    description: "\u00c9tablissement \u2014 R\u00e9gion Provence-Alpes-C\u00f4te d'Azur",
+    description: "Établissement — Région Provence-Alpes-Côte d'Azur",
   },
 ]
 
+// ── Navigation ───────────────────────────────────────────────
 export const NAV_LINKS = [
   { label: "Accueil", href: "/" },
   { label: "Expertises", href: "/services" },
+  { label: "Tarifs", href: "/tarifs" },
   { label: "Notre approche", href: "/a-propos" },
   { label: "Contact", href: "/contact" },
 ] as const
 
+// ── Company ──────────────────────────────────────────────────
 export const COMPANY = {
   name: "LC",
   fullName: "Oyane Nze Clodia",
   siren: "999 885 171",
   siret: "999 885 171 00010",
   ape: "8211Z",
-  email: "oyaneclaudia@juridique.fr",
+  email: "nze.claudia@yahoo.fr",
   phone: "+33 7 58 74 56 23",
+  linkedin: "https://www.linkedin.com/in/clodia-oyane-nze-35b0681ba",
+  instagram: "https://www.instagram.com/charlynoyane",
   tagline: "Votre vision. Notre protection juridique.",
   description:
-    "Votre partenaire de confiance pour la cr\u00e9ation d'entreprise, les formalit\u00e9s juridiques et l'accompagnement administratif.",
+    "Votre partenaire de confiance pour la création d'entreprise, les formalités juridiques et l'accompagnement administratif.",
 } as const

@@ -4,6 +4,7 @@ import { PageLayout } from "@/components/layout/PageLayout"
 
 const Home = lazy(() => import("@/pages/Home"))
 const ServicesPage = lazy(() => import("@/pages/ServicesPage"))
+const TarifsPage = lazy(() => import("@/pages/TarifsPage"))
 const About = lazy(() => import("@/pages/About"))
 const Blog = lazy(() => import("@/pages/Blog"))
 const ContactPage = lazy(() => import("@/pages/ContactPage"))
@@ -25,6 +26,7 @@ export default function App() {
           <Route element={<PageLayout />}>
             <Route index element={<Home />} />
             <Route path="services" element={<ServicesPage />} />
+            <Route path="tarifs" element={<TarifsPage />} />
             <Route path="a-propos" element={<About />} />
             <Route path="blog" element={<Blog />} />
             <Route path="contact" element={<ContactPage />} />
