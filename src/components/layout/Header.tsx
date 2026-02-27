@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { Menu } from "lucide-react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Menu, LogIn, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { MobileMenu } from "./MobileMenu"
 import { useNavigationStore } from "@/store/useNavigationStore"
+import { useAuthStore } from "@/store/useAuthStore"
 import { NAV_LINKS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 import { gsap } from "gsap"
@@ -12,7 +13,10 @@ import { MagneticButton } from "@/components/effects/MagneticButton"
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const { openMobileMenu } = useNavigationStore()
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
   const location = useLocation()
+  const navigate = useNavigate()
 
   // Homepage has a dark hero, all other pages have light backgrounds
   const isDarkHero = location.pathname === "/"
@@ -118,6 +122,53 @@ export function Header() {
 
           {/* Actions */}
           <div ref={actionsRef} className="flex items-center gap-2">
+            {user ? (
+              <div className="hidden items-center gap-3 lg:flex">
+                <Link
+                  to="/temoignages"
+                  className={cn(
+                    "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all",
+                    useDarkText
+                      ? "border-border text-foreground hover:bg-muted"
+                      : "border-white/10 text-white/80 hover:bg-white/10"
+                  )}
+                >
+                  <User className="h-4 w-4" />
+                  {user.fullName.split(" ")[0]}
+                </Link>
+                <button
+                  onClick={() => { logout(); navigate("/") }}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-full transition-all",
+                    useDarkText
+                      ? "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      : "text-white/50 hover:bg-white/10 hover:text-white"
+                  )}
+                  aria-label="Se déconnecter"
+                  title="Se déconnecter"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <MagneticButton className="hidden lg:block" strength={0.25}>
+                <Link to="/connexion">
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "rounded-full px-5 font-medium transition-all",
+                      useDarkText
+                        ? "border-border text-foreground hover:bg-muted"
+                        : "border-white/15 text-white hover:bg-white/10"
+                    )}
+                  >
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Se connecter
+                  </Button>
+                </Link>
+              </MagneticButton>
+            )}
+
             <MagneticButton className="hidden lg:block" strength={0.25}>
               <Link to="/contact">
                 <Button className="bg-royal hover:bg-royal-dark text-white rounded-full px-6 font-medium shadow-lg shadow-royal/20 transition-all hover:shadow-xl hover:shadow-royal/30">

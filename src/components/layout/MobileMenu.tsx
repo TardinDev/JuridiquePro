@@ -1,14 +1,18 @@
-import { Link, useLocation } from "react-router-dom"
-import { X } from "lucide-react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { X, LogIn, LogOut, User } from "lucide-react"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { useNavigationStore } from "@/store/useNavigationStore"
+import { useAuthStore } from "@/store/useAuthStore"
 import { NAV_LINKS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
 export function MobileMenu() {
   const { isMobileMenuOpen, closeMobileMenu } = useNavigationStore()
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
   const location = useLocation()
+  const navigate = useNavigate()
 
   return (
     <Sheet open={isMobileMenuOpen} onOpenChange={closeMobileMenu}>
@@ -45,7 +49,34 @@ export function MobileMenu() {
             ))}
           </nav>
 
-          <div className="border-t border-border px-6 py-6">
+          <div className="border-t border-border px-6 py-6 space-y-3">
+            {user ? (
+              <div className="flex items-center justify-between rounded-xl bg-muted px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-royal/10 text-royal">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{user.fullName}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { logout(); closeMobileMenu(); navigate("/") }}
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground transition-colors"
+                  aria-label="Se déconnecter"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <Link to="/connexion" onClick={closeMobileMenu}>
+                <Button variant="outline" className="w-full rounded-full py-6 text-base font-medium border-border">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Se connecter
+                </Button>
+              </Link>
+            )}
             <Link to="/contact" onClick={closeMobileMenu}>
               <Button className="w-full bg-royal hover:bg-royal-dark text-white rounded-full py-6 text-base font-medium shadow-lg shadow-royal/20">
                 Consultation gratuite
