@@ -1,4 +1,32 @@
+# Robots classiques
 User-agent: *
 Allow: /
-
 Sitemap: https://projuridique.com/sitemap.xml
+
+# Crawlers IA — autoriser explicitement
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Cohere-ai
+Allow: /

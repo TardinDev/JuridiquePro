@@ -1,0 +1,7 @@
+# Juridique Pro — projuridique.com
+# Ce fichier est un alias de /llms.txt pour compatibilité .well-known
+
+> Expert en formalités juridiques et création d'entreprises en France.
+> Bureaux à Lyon (Vénissieux) et Nice. Plus de 500 entreprises créées. 15 ans d'expérience.
+
+Voir le fichier complet : https://projuridique.com/llms.txt

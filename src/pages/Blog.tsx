@@ -67,9 +67,10 @@ const CATEGORIES = ["Tous", "Création", "Juridique", "Fiscalité", "Conseils", 
 
 export default function Blog() {
   useSEO({
-    title: "Blog",
+    title: "Blog — Conseils création d'entreprise",
     description:
-      "Conseils et actualités sur la création d'entreprise, les formalités juridiques et la gestion administrative.",
+      "Blog Juridique Pro : guides pratiques sur la création d'entreprise, choix du statut juridique (SARL vs SAS), fiscalité auto-entrepreneur, domiciliation, aides aux entrepreneurs en France.",
+    canonical: "/blog",
   })
 
   const [posts, setPosts] = useState<(ApiBlogPost | typeof STATIC_POSTS[0])[]>(STATIC_POSTS)

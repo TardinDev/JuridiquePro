@@ -10,7 +10,8 @@ import { useSEO } from "@/hooks/useSEO"
 export default function Home() {
   useSEO({
     description:
-      "Juridique Pro — Cabinet juridique expert en création de sociétés, micro-entreprises et droit des affaires. Votre vision. Notre protection juridique.",
+      "Juridique Pro — Cabinet expert en création de sociétés (SARL, SAS, SASU, SCI) dès 0€, micro-entreprise dès 59€. 500+ entreprises créées, 15 ans d'expérience. Bureaux à Lyon et Nice. Domiciliation, comptabilité, droit des sociétés.",
+    canonical: "/",
   })
 
   return (

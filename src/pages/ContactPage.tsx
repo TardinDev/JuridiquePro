@@ -30,9 +30,10 @@ type ContactForm = z.infer<typeof contactSchema>
 
 export default function ContactPage() {
   useSEO({
-    title: "Contact",
+    title: "Contact — Consultation gratuite",
     description:
-      "Contactez Juridique Pro pour une consultation gratuite. Bureaux à Lyon et Nice.",
+      "Contactez Juridique Pro pour une consultation gratuite et sans engagement. Bureaux à Lyon-Vénissieux (37 av. Jean Cagne) et Nice (13 av. Cagnoli). Réponse sous 24h. Tél: +33 7 58 74 56 23.",
+    canonical: "/contact",
   })
 
   const formRef = useRef<HTMLDivElement>(null)

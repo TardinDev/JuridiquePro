@@ -14,9 +14,10 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function ServicesPage() {
   useSEO({
-    title: "Services",
+    title: "Services — Création d'entreprise, droit des sociétés, domiciliation",
     description:
-      "Découvrez nos services : création d'entreprise, micro-entrepreneur, domiciliation, comptabilité, modification de statuts, gestion administrative et suivi.",
+      "Services Juridique Pro : création de société (SARL, SAS, SASU, SCI, EURL) dès 0€ HT, micro-entreprise dès 59€ HT, modification de statuts, domiciliation à Lyon et Nice, comptabilité, gestion administrative. Garantie anti-rejet du greffe.",
+    canonical: "/services",
   })
 
   const heroRef = useRef<HTMLElement>(null)

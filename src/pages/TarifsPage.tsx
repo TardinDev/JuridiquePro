@@ -158,9 +158,10 @@ function PricingSection({ category }: { category: PricingCategory }) {
 
 export default function TarifsPage() {
   useSEO({
-    title: "Tarifs",
+    title: "Tarifs — Création d'entreprise dès 0€ HT",
     description:
-      "Découvrez nos tarifs transparents pour la création d'entreprise, micro-entreprise, modification de statuts, domiciliation et comptabilité. Dès 0 € HT.",
+      "Tarifs Juridique Pro : création société dès 0€ HT, micro-entreprise 59€ HT, changement dirigeant 59€ HT, domiciliation 19€/mois, comptabilité 39€/mois. Forfaits transparents sans frais cachés.",
+    canonical: "/tarifs",
   })
 
   const [activeTab, setActiveTab] = useState(PRICING_CATEGORIES[0].id)

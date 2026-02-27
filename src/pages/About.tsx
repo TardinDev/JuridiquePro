@@ -33,9 +33,10 @@ const VALUES = [
 
 export default function About() {
   useSEO({
-    title: "À propos",
+    title: "À propos — 15 ans d'expertise juridique",
     description:
-      "Découvrez Clodia Oyane Nze, fondatrice de Juridique Pro, experte en formalités juridiques et création d'entreprises.",
+      "Fondé par Clodia Oyane Nze, experte en droit des sociétés avec 15 ans d'expérience. Juridique Pro accompagne plus de 500 entreprises en France. Bureaux à Lyon-Vénissieux et Nice.",
+    canonical: "/a-propos",
   })
 
   const heroRef = useRef<HTMLElement>(null)
