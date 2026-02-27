@@ -636,7 +636,6 @@ export const NAV_LINKS = [
   { label: "Accueil", href: "/" },
   { label: "Expertises", href: "/services" },
   { label: "Tarifs", href: "/tarifs" },
-  { label: "Témoignages", href: "/temoignages" },
   { label: "Notre approche", href: "/a-propos" },
   { label: "Contact", href: "/contact" },
 ] as const

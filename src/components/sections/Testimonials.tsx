@@ -1,8 +1,7 @@
 import { useRef, useEffect, useCallback } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import Autoplay from "embla-carousel-autoplay"
-import { Star, ChevronLeft, ChevronRight, Quote, ArrowRight } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import { TESTIMONIALS } from "@/lib/constants"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -109,16 +108,6 @@ export function Testimonials() {
             >
               <ChevronRight className="h-4 w-4" />
             </button>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              to="/temoignages"
-              className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 font-heading text-sm font-semibold text-foreground transition-all hover:border-royal/30 hover:bg-royal hover:text-white hover:shadow-lg hover:shadow-royal/20"
-            >
-              Voir tous les témoignages
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
           </div>
         </div>
       </div>
