@@ -9,6 +9,7 @@ import testimonialRoutes from "./routes/testimonials.routes.js"
 import contactRoutes from "./routes/contact.routes.js"
 import blogRoutes from "./routes/blog.routes.js"
 import adminRoutes from "./routes/admin.routes.js"
+import chatRoutes from "./routes/chat.routes.js"
 
 const app = express()
 const PORT = parseInt(process.env.PORT || "3001", 10)
@@ -41,6 +42,7 @@ app.use("/api/testimonials", testimonialRoutes)
 app.use("/api/contact", contactRoutes)
 app.use("/api/blog", blogRoutes)
 app.use("/api/admin", adminRoutes)
+app.use("/api/chat", chatRoutes)
 
 // ── Health check ────────────────────────────────────────────────
 app.get("/api/health", (_req, res) => {

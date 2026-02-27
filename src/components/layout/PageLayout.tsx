@@ -7,6 +7,7 @@ import { ScrollProgress } from "@/components/effects/ScrollProgress"
 import { PageTransition } from "@/components/effects/PageTransition"
 import { useEffect } from "react"
 import { WhatsAppCard } from "@/components/effects/WhatsAppCard"
+import { ChatWidget } from "@/components/ChatWidget"
 
 export function PageLayout() {
   const { pathname } = useLocation()
@@ -29,6 +30,7 @@ export function PageLayout() {
         <Footer />
       </SmoothScroll>
       <WhatsAppCard />
+      <ChatWidget />
     </>
   )
 }
