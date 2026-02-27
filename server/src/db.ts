@@ -40,6 +40,7 @@ const PG_SCHEMA = `
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user','admin')),
     created_at TIMESTAMPTZ DEFAULT NOW()
   );
 
@@ -53,6 +54,32 @@ const PG_SCHEMA = `
     status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
     created_at TIMESTAMPTZ DEFAULT NOW()
   );
+
+  CREATE TABLE IF NOT EXISTS contact_messages (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT,
+    subject TEXT NOT NULL,
+    message TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'unread' CHECK(status IN ('unread','read','archived')),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+
+  CREATE TABLE IF NOT EXISTS blog_posts (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    excerpt TEXT NOT NULL,
+    content TEXT NOT NULL,
+    category TEXT NOT NULL,
+    read_time TEXT DEFAULT '5 min',
+    status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','published')),
+    author_id INTEGER REFERENCES users(id),
+    author_name TEXT NOT NULL DEFAULT 'Juridique Pro',
+    published_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
 `
 
 const SQLITE_SCHEMA = `
@@ -61,6 +88,7 @@ const SQLITE_SCHEMA = `
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user','admin')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -74,15 +102,57 @@ const SQLITE_SCHEMA = `
     status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS contact_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT,
+    subject TEXT NOT NULL,
+    message TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'unread' CHECK(status IN ('unread','read','archived')),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS blog_posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    excerpt TEXT NOT NULL,
+    content TEXT NOT NULL,
+    category TEXT NOT NULL,
+    read_time TEXT DEFAULT '5 min',
+    status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','published')),
+    author_id INTEGER REFERENCES users(id),
+    author_name TEXT NOT NULL DEFAULT 'Juridique Pro',
+    published_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `
+
+// ── Migration: add columns to existing tables ────────────────────
+const PG_MIGRATIONS = [
+    "ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user'",
+]
+
+const SQLITE_MIGRATIONS = [
+    // SQLite doesn't support ADD COLUMN IF NOT EXISTS, so we wrap in try/catch
+    "ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user'",
+]
 
 // ── Initialize database ─────────────────────────────────────────
 export async function initializeDatabase() {
     if (isProduction && pgPool) {
         await pgPool.query(PG_SCHEMA)
+        for (const migration of PG_MIGRATIONS) {
+            try { await pgPool.query(migration) } catch { /* column already exists */ }
+        }
         console.log("PostgreSQL tables initialized")
     } else if (sqliteDb) {
         sqliteDb.exec(SQLITE_SCHEMA)
+        for (const migration of SQLITE_MIGRATIONS) {
+            try { sqliteDb.exec(migration) } catch { /* column already exists */ }
+        }
         console.log("SQLite tables initialized")
     }
 }
@@ -100,7 +170,12 @@ export async function dbRun(
         let pgQuery = query
         let idx = 0
         pgQuery = pgQuery.replace(/\?/g, () => `$${++idx}`)
-        const result = await pgPool.query(pgQuery + " RETURNING id", params)
+
+        // Only add RETURNING id for INSERT statements
+        const isInsert = query.trimStart().toUpperCase().startsWith("INSERT")
+        const finalQuery = isInsert ? pgQuery + " RETURNING id" : pgQuery
+
+        const result = await pgPool.query(finalQuery, params)
         return { lastId: result.rows[0]?.id }
     } else if (sqliteDb) {
         const stmt = sqliteDb.prepare(query)

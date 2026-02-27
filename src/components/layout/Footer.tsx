@@ -120,8 +120,8 @@ export function Footer() {
             <span>APE : {COMPANY.ape}</span>
           </div>
           <div className="flex gap-4">
-            <Link to="#" className="transition-colors hover:text-white/60">Mentions légales</Link>
-            <Link to="#" className="transition-colors hover:text-white/60">Politique de confidentialité</Link>
+            <Link to="/mentions-legales" className="transition-colors hover:text-white/60">Mentions légales</Link>
+            <Link to="/politique-de-confidentialite" className="transition-colors hover:text-white/60">Politique de confidentialité</Link>
           </div>
         </div>
 

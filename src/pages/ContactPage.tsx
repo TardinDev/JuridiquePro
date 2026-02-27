@@ -12,6 +12,7 @@ import { COMPANY, LOCATIONS } from "@/lib/constants"
 import { MagneticButton } from "@/components/effects/MagneticButton"
 import { useSEO } from "@/hooks/useSEO"
 import { toast } from "sonner"
+import { apiSubmitContact } from "@/lib/api"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
@@ -68,10 +69,14 @@ export default function ContactPage() {
     return () => ctx.revert()
   }, [])
 
-  const onSubmit = async (_data: ContactForm) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    toast.success("Message envoyé avec succès ! Nous vous répondons sous 24h.")
-    reset()
+  const onSubmit = async (data: ContactForm) => {
+    try {
+      const result = await apiSubmitContact(data)
+      toast.success(result.message)
+      reset()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur lors de l'envoi")
+    }
   }
 
   return (

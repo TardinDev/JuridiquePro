@@ -6,6 +6,9 @@ import cors from "cors"
 import { initializeDatabase } from "./db.js"
 import authRoutes from "./routes/auth.routes.js"
 import testimonialRoutes from "./routes/testimonials.routes.js"
+import contactRoutes from "./routes/contact.routes.js"
+import blogRoutes from "./routes/blog.routes.js"
+import adminRoutes from "./routes/admin.routes.js"
 
 const app = express()
 const PORT = parseInt(process.env.PORT || "3001", 10)
@@ -35,6 +38,9 @@ app.use(express.json())
 // ── Routes ──────────────────────────────────────────────────────
 app.use("/api/auth", authRoutes)
 app.use("/api/testimonials", testimonialRoutes)
+app.use("/api/contact", contactRoutes)
+app.use("/api/blog", blogRoutes)
+app.use("/api/admin", adminRoutes)
 
 // ── Health check ────────────────────────────────────────────────
 app.get("/api/health", (_req, res) => {
@@ -46,13 +52,13 @@ async function start() {
     try {
         await initializeDatabase()
         app.listen(PORT, () => {
-            console.log(`🚀 Server running on http://localhost:${PORT}`)
+            console.log(`Server running on http://localhost:${PORT}`)
             console.log(
-                `📦 Database: ${process.env.NODE_ENV === "production" ? "PostgreSQL" : "SQLite"}`
+                `Database: ${process.env.NODE_ENV === "production" ? "PostgreSQL" : "SQLite"}`
             )
         })
     } catch (error) {
-        console.error("❌ Failed to start server:", error)
+        console.error("Failed to start server:", error)
         process.exit(1)
     }
 }

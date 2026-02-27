@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Home, Phone, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { MagneticButton } from "@/components/effects/MagneticButton"
 import { useSEO } from "@/hooks/useSEO"
@@ -25,7 +25,7 @@ export default function NotFound() {
           La page que vous cherchez n'existe pas ou a été déplacée.
         </p>
 
-        <div className="mt-8">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <MagneticButton className="inline-block">
             <Link to="/">
               <Button
@@ -37,6 +37,30 @@ export default function NotFound() {
               </Button>
             </Link>
           </MagneticButton>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-lg gap-3 sm:grid-cols-3">
+          <Link
+            to="/"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card/50 p-4 text-sm text-muted-foreground transition-all hover:border-royal/20 hover:text-foreground"
+          >
+            <Home className="h-5 w-5 text-royal" />
+            Accueil
+          </Link>
+          <Link
+            to="/services"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card/50 p-4 text-sm text-muted-foreground transition-all hover:border-royal/20 hover:text-foreground"
+          >
+            <FileText className="h-5 w-5 text-royal" />
+            Nos services
+          </Link>
+          <Link
+            to="/contact"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card/50 p-4 text-sm text-muted-foreground transition-all hover:border-royal/20 hover:text-foreground"
+          >
+            <Phone className="h-5 w-5 text-royal" />
+            Contact
+          </Link>
         </div>
       </div>
     </section>

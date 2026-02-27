@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import { z } from "zod"
 import { dbRun, dbGet } from "../db.js"
 import { signToken, authenticateToken, type AuthenticatedRequest } from "../auth.js"
+import { sendWelcomeEmail } from "../email.js"
 
 const router = Router()
 
@@ -53,6 +54,9 @@ router.post("/register", async (req, res) => {
 
         const token = signToken({ userId: result.lastId!, email })
 
+        // Send welcome email (non-blocking)
+        sendWelcomeEmail({ name: fullName, email }).catch(console.error)
+
         res.status(201).json({
             token,
             user: { id: result.lastId, fullName, email },
@@ -82,7 +86,8 @@ router.post("/login", async (req, res) => {
             full_name: string
             email: string
             password_hash: string
-        }>("SELECT id, full_name, email, password_hash FROM users WHERE email = ?", [
+            role: string
+        }>("SELECT id, full_name, email, password_hash, role FROM users WHERE email = ?", [
             email,
         ])
 
@@ -101,7 +106,7 @@ router.post("/login", async (req, res) => {
 
         res.json({
             token,
-            user: { id: user.id, fullName: user.full_name, email: user.email },
+            user: { id: user.id, fullName: user.full_name, email: user.email, role: user.role },
         })
     } catch (error) {
         console.error("Login error:", error)
@@ -117,8 +122,9 @@ router.get("/me", authenticateToken, async (req, res) => {
             id: number
             full_name: string
             email: string
+            role: string
             created_at: string
-        }>("SELECT id, full_name, email, created_at FROM users WHERE id = ?", [
+        }>("SELECT id, full_name, email, role, created_at FROM users WHERE id = ?", [
             authReq.user!.userId,
         ])
 
@@ -132,6 +138,7 @@ router.get("/me", authenticateToken, async (req, res) => {
                 id: user.id,
                 fullName: user.full_name,
                 email: user.email,
+                role: user.role,
                 createdAt: user.created_at,
             },
         })

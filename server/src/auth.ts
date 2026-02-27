@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import type { Request, Response, NextFunction } from "express"
+import { dbGet } from "./db.js"
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-in-production"
 const JWT_EXPIRES_IN = "7d"
@@ -41,5 +42,27 @@ export function authenticateToken(
     } catch {
         res.status(403).json({ error: "Token invalide ou expiré" })
         return
+    }
+}
+
+export async function requireAdmin(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+): Promise<void> {
+    try {
+        const user = await dbGet<{ role: string }>(
+            "SELECT role FROM users WHERE id = ?",
+            [req.user!.userId]
+        )
+
+        if (!user || user.role !== "admin") {
+            res.status(403).json({ error: "Accès réservé aux administrateurs" })
+            return
+        }
+
+        next()
+    } catch {
+        res.status(500).json({ error: "Erreur serveur" })
     }
 }

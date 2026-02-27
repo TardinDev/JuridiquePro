@@ -2,6 +2,7 @@ import { Router } from "express"
 import { z } from "zod"
 import { dbAll, dbRun } from "../db.js"
 import { authenticateToken, type AuthenticatedRequest } from "../auth.js"
+import { sendTestimonialNotification } from "../email.js"
 
 const router = Router()
 
@@ -60,6 +61,9 @@ router.post("/", authenticateToken, async (req, res) => {
             "INSERT INTO testimonials (user_id, name, role, content, rating) VALUES (?, ?, ?, ?, ?)",
             [authReq.user!.userId, name, role, content, rating]
         )
+
+        // Send notification to admin (non-blocking)
+        sendTestimonialNotification({ name, content, rating }).catch(console.error)
 
         res.status(201).json({
             message: "Témoignage soumis avec succès ! Il sera visible après validation.",
