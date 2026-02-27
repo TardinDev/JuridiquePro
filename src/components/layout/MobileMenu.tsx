@@ -77,7 +77,7 @@ export function MobileMenu() {
                 </Button>
               </Link>
             )}
-            <Link to="/contact" onClick={closeMobileMenu}>
+            <Link to="/contact" onClick={closeMobileMenu} className="block">
               <Button className="w-full bg-royal hover:bg-royal-dark text-white rounded-full py-6 text-base font-medium shadow-lg shadow-royal/20">
                 Consultation gratuite
               </Button>

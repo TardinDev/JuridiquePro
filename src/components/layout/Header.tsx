@@ -97,13 +97,13 @@ export function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav ref={navRef} className="hidden items-center gap-1 lg:flex">
+          <nav ref={navRef} className="hidden items-center gap-0.5 lg:flex">
             {NAV_LINKS.map((link) => (
               <MagneticButton key={link.href} strength={0.4}>
                 <Link
                   to={link.href}
                   className={cn(
-                    "relative block px-5 py-2 text-sm font-medium transition-colors duration-300 rounded-lg",
+                    "relative block px-3 xl:px-4 py-2 text-[13px] xl:text-sm font-medium transition-colors duration-300 rounded-lg whitespace-nowrap",
                     location.pathname === link.href
                       ? useDarkText ? "text-foreground" : "text-white"
                       : useDarkText
@@ -151,22 +151,19 @@ export function Header() {
                 </button>
               </div>
             ) : (
-              <MagneticButton className="hidden lg:block" strength={0.25}>
-                <Link to="/connexion">
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "rounded-full px-5 font-medium transition-all",
-                      useDarkText
-                        ? "border-border text-foreground hover:bg-muted"
-                        : "border-white/15 text-white hover:bg-white/10"
-                    )}
-                  >
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Se connecter
-                  </Button>
-                </Link>
-              </MagneticButton>
+              <Link to="/connexion" className="hidden lg:block">
+                <button
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all",
+                    useDarkText
+                      ? "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+                      : "text-white/70 hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  <LogIn className="h-3.5 w-3.5" />
+                  Connexion
+                </button>
+              </Link>
             )}
 
             <MagneticButton className="hidden lg:block" strength={0.25}>
