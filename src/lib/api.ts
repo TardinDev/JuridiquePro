@@ -1,6 +1,8 @@
 // ── API Helper for JuridiquePro ─────────────────────────────────
 
-const API_BASE = import.meta.env.VITE_API_URL || "/api"
+const API_BASE = import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/api`
+    : "/api"
 
 function getToken(): string | null {
     return localStorage.getItem("jp_token")
