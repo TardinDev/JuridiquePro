@@ -19,9 +19,16 @@ export function MobileMenu() {
       <SheetContent side="right" className="w-full sm:w-[400px] p-0 border-none">
         <div className="flex h-full flex-col bg-background">
           <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-            <span className="font-accent text-2xl font-bold text-foreground">
-              Juridique <span className="text-royal">Pro</span>
-            </span>
+            <div className="flex items-center gap-3">
+              <img
+                src="/images/logo.png"
+                alt="Juridique Pro"
+                className="h-10 w-auto"
+              />
+              <span className="font-accent text-2xl font-bold text-foreground">
+                Juridique <span className="text-royal">Pro</span>
+              </span>
+            </div>
             <button
               onClick={closeMobileMenu}
               className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted"

@@ -11,7 +11,12 @@ export function Footer() {
       <div className="container-custom section-padding">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
-            <Link to="/" className="mb-6 inline-block">
+            <Link to="/" className="mb-6 inline-flex items-center gap-3">
+              <img
+                src="/images/logo.png"
+                alt="Juridique Pro"
+                className="h-12 w-auto"
+              />
               <span className="font-accent text-2xl font-bold text-white">
                 Juridique <span className="text-royal">Pro</span>
               </span>

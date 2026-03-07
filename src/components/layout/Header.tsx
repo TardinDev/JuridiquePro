@@ -88,6 +88,11 @@ export function Header() {
             to="/"
             className="group flex items-center gap-3 transition-opacity hover:opacity-90"
           >
+            <img
+              src="/images/logo.png"
+              alt="Juridique Pro"
+              className="h-10 w-auto"
+            />
             <span className={cn(
               "font-accent text-2xl font-bold leading-none tracking-tight transition-colors duration-300",
               useDarkText ? "text-foreground" : "text-white"
