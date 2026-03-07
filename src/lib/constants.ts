@@ -648,7 +648,7 @@ export const COMPANY = {
   siret: "999 885 171 00010",
   ape: "8211Z",
   email: "nze.claudia@yahoo.fr",
-  phone: "+33 7 58 74 56 23",
+  phone: "+33 6 67 91 85 97",
   linkedin: "https://www.linkedin.com/in/clodia-oyane-nze-35b0681ba",
   instagram: "https://www.instagram.com/charlynoyane",
   tagline: "Votre vision. Notre protection juridique.",

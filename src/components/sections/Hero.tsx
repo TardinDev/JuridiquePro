@@ -354,9 +354,9 @@ export function Hero() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════ */}
+
       {/* PRENONS CONTACT — apparaît au scroll       */}
-      {/* ══════════════════════════════════════════ */}
+
       <section className="relative z-10 py-24 md:py-32 lg:py-40">
         <div className="w-full max-w-6xl mx-auto px-6 md:px-16 lg:px-24">
           <div className="flex w-full flex-col items-center gap-12 lg:flex-row lg:gap-16">
@@ -409,7 +409,7 @@ export function Hero() {
                 <div className="space-y-3.5">
                   {[
                     { icon: Mail, text: "nze.claudia@yahoo.fr" },
-                    { icon: Phone, text: "+33 7 58 74 56 23" },
+                    { icon: Phone, text: "+33 6 67 91 85 97", color: "text-green-500" },
                     { icon: MapPin, text: "Lyon & Nice" },
                   ].map(({ icon: Icon, text }) => (
                     <div key={text} className="flex items-center gap-3">
