@@ -38,3 +38,11 @@ server/dist/
 *.sln
 *.sw?
 .vercel
+
+# AI/IDE agent directories
+.agent/
+.agents/
+.claude/
+.continue/
+.junie/
+skills-lock.json
