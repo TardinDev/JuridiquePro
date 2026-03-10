@@ -1,10 +1,10 @@
 import { Router } from "express"
-import { z } from "zod"
+import { streamText, convertToModelMessages, createUIMessageStream, pipeUIMessageStreamToResponse } from "ai"
+import { createGoogleGenerativeAI } from "@ai-sdk/google"
 
 const router = Router()
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
-const CHAT_MODEL = process.env.CHAT_MODEL || "claude-haiku-4-5-20251001"
+const GOOGLE_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY
 
 const SYSTEM_PROMPT = `Tu es l'assistant virtuel de Juridique Pro, un cabinet expert en formalités juridiques et création d'entreprises en France, fondé par Oyane Nze Clodia. Tu réponds UNIQUEMENT en français, de manière professionnelle, chaleureuse et concise.
 
@@ -58,15 +58,6 @@ const SYSTEM_PROMPT = `Tu es l'assistant virtuel de Juridique Pro, un cabinet ex
 6. Mentionne la consultation gratuite quand c'est pertinent
 7. Sois chaleureux et professionnel, tutoie le visiteur si il te tutoie, sinon vouvoie`
 
-const messageSchema = z.object({
-    messages: z.array(
-        z.object({
-            role: z.enum(["user", "assistant"]),
-            content: z.string().max(1000),
-        })
-    ).min(1).max(20),
-})
-
 // ── Fallback responses (when no API key) ──────────────────────
 function getFallbackResponse(userMessage: string): string {
     const msg = userMessage.toLowerCase()
@@ -114,59 +105,100 @@ function getFallbackResponse(userMessage: string): string {
     return "Merci pour votre question ! Pour vous répondre au mieux, je vous invite à contacter notre équipe directement. La première consultation est gratuite et sans engagement. Appelez-nous au +33 7 58 74 56 23 ou écrivez-nous sur projuridique.com/contact."
 }
 
+// Extract last user text from UIMessage parts
+function getLastUserText(messages: Array<{ role: string; parts?: Array<{ type: string; text?: string }> }>): string {
+    for (let i = messages.length - 1; i >= 0; i--) {
+        const msg = messages[i]
+        if (msg.role === "user" && msg.parts) {
+            const textPart = msg.parts.find((p) => p.type === "text" && p.text)
+            if (textPart && textPart.text) return textPart.text
+        }
+    }
+    return ""
+}
+
 // ── POST /api/chat ────────────────────────────────────────────
 router.post("/", async (req, res) => {
     try {
-        const parsed = messageSchema.safeParse(req.body)
-        if (!parsed.success) {
+        const { messages } = req.body
+
+        if (!messages || !Array.isArray(messages)) {
             res.status(400).json({ error: "Messages invalides" })
             return
         }
 
-        const { messages } = parsed.data
-        const lastMessage = messages[messages.length - 1]
+        const lastUserText = getLastUserText(messages)
 
-        // If no API key, use fallback
-        if (!ANTHROPIC_API_KEY) {
-            const reply = getFallbackResponse(lastMessage.content)
-            res.json({ reply })
+        // If no Google API key, use fallback via UIMessage stream
+        if (!GOOGLE_API_KEY) {
+            const fallbackText = getFallbackResponse(lastUserText)
+            const stream = createUIMessageStream({
+                execute: ({ writer }) => {
+                    writer.write({ type: "text-start", id: "fallback-text" })
+                    writer.write({ type: "text-delta", id: "fallback-text", delta: fallbackText })
+                    writer.write({ type: "text-end", id: "fallback-text" })
+                },
+            })
+            pipeUIMessageStreamToResponse({ response: res, stream })
             return
         }
 
-        // Call Anthropic API
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": ANTHROPIC_API_KEY,
-                "anthropic-version": "2023-06-01",
+        // Use AI SDK with Google Gemini, with fallback on error
+        const google = createGoogleGenerativeAI({ apiKey: GOOGLE_API_KEY })
+
+        const modelMessages = await convertToModelMessages(messages)
+
+        const stream = createUIMessageStream({
+            execute: async ({ writer }) => {
+                try {
+                    const result = streamText({
+                        model: google("gemini-2.0-flash"),
+                        system: SYSTEM_PROMPT,
+                        messages: modelMessages,
+                        maxOutputTokens: 500,
+                    })
+
+                    // Consume textStream manually to catch errors
+                    let started = false
+                    const textId = "gemini-text"
+
+                    for await (const delta of result.textStream) {
+                        if (!started) {
+                            writer.write({ type: "text-start", id: textId })
+                            started = true
+                        }
+                        writer.write({ type: "text-delta", id: textId, delta })
+                    }
+
+                    if (started) {
+                        writer.write({ type: "text-end", id: textId })
+                    } else {
+                        throw new Error("Empty response from Gemini")
+                    }
+                } catch (err) {
+                    console.error("Gemini error, using fallback:", err)
+                    const fallbackText = getFallbackResponse(lastUserText)
+                    writer.write({ type: "text-start", id: "fallback-text" })
+                    writer.write({ type: "text-delta", id: "fallback-text", delta: fallbackText })
+                    writer.write({ type: "text-end", id: "fallback-text" })
+                }
             },
-            body: JSON.stringify({
-                model: CHAT_MODEL,
-                max_tokens: 300,
-                system: SYSTEM_PROMPT,
-                messages: messages.map((m) => ({
-                    role: m.role,
-                    content: m.content,
-                })),
-            }),
         })
 
-        if (!response.ok) {
-            console.error("Anthropic API error:", response.status, await response.text())
-            // Fallback on API error
-            const reply = getFallbackResponse(lastMessage.content)
-            res.json({ reply })
-            return
-        }
-
-        const data = await response.json()
-        const reply = data.content?.[0]?.text || getFallbackResponse(lastMessage.content)
-
-        res.json({ reply })
+        pipeUIMessageStreamToResponse({ response: res, stream })
     } catch (error) {
         console.error("Chat error:", error)
-        res.status(500).json({ error: "Erreur serveur" })
+        if (!res.headersSent) {
+            const fallbackText = getFallbackResponse(getLastUserText(req.body?.messages || []))
+            const stream = createUIMessageStream({
+                execute: ({ writer }) => {
+                    writer.write({ type: "text-start", id: "fallback-text" })
+                    writer.write({ type: "text-delta", id: "fallback-text", delta: fallbackText })
+                    writer.write({ type: "text-end", id: "fallback-text" })
+                },
+            })
+            pipeUIMessageStreamToResponse({ response: res, stream })
+        }
     }
 })
 

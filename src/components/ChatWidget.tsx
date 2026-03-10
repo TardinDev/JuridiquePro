@@ -1,11 +1,9 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { MessageCircle, X, Send, Bot, User } from "lucide-react"
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport } from "ai"
 import { cn } from "@/lib/utils"
-
-interface Message {
-  role: "user" | "assistant"
-  content: string
-}
+import type { UIMessage } from "ai"
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -18,19 +16,49 @@ const SUGGESTIONS = [
   "Où sont vos bureaux ?",
 ]
 
+const WELCOME_MESSAGE: UIMessage = {
+  id: "welcome",
+  role: "assistant",
+  parts: [
+    {
+      type: "text",
+      text: "Bonjour ! Je suis l'assistant Juridique Pro. Comment puis-je vous aider ? Création d'entreprise, formalités, tarifs... posez-moi vos questions !",
+    },
+  ],
+}
+
+function getMessageText(msg: UIMessage): string {
+  return msg.parts
+    .filter((p): p is { type: "text"; text: string } => p.type === "text" && "text" in p)
+    .map((p) => p.text)
+    .join("")
+}
+
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content:
-        "Bonjour ! Je suis l'assistant Juridique Pro. Comment puis-je vous aider ? Création d'entreprise, formalités, tarifs... posez-moi vos questions !",
-    },
-  ])
-  const [input, setInput] = useState("")
-  const [loading, setLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [inputValue, setInputValue] = useState("")
+
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: `${API_BASE}/chat` }),
+    []
+  )
+
+  const {
+    messages,
+    sendMessage,
+    status,
+    error,
+  } = useChat({
+    transport,
+    messages: [WELCOME_MESSAGE],
+    onError: (err) => {
+      console.error("Chat error:", err)
+    },
+  })
+
+  const isLoading = status === "submitted" || status === "streaming"
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -42,58 +70,15 @@ export function ChatWidget() {
     }
   }, [isOpen])
 
-  const sendMessage = async (text: string) => {
-    if (!text.trim() || loading) return
-
-    const userMsg: Message = { role: "user", content: text.trim() }
-    const newMessages = [...messages, userMsg]
-    setMessages(newMessages)
-    setInput("")
-    setLoading(true)
-
-    try {
-      const res = await fetch(`${API_BASE}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: newMessages
-            .filter((m) => m.role === "user" || m.role === "assistant")
-            .slice(-10)
-            .map((m) => ({ role: m.role, content: m.content })),
-        }),
-      })
-
-      const data = await res.json()
-
-      if (data.reply) {
-        setMessages((prev) => [...prev, { role: "assistant", content: data.reply }])
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content:
-              "Désolé, je rencontre un problème technique. Contactez-nous au +33 7 58 74 56 23.",
-          },
-        ])
-      }
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content:
-            "Désolé, je ne parviens pas à me connecter. Contactez-nous directement au +33 7 58 74 56 23 ou par email à nze.claudia@yahoo.fr.",
-        },
-      ])
-    } finally {
-      setLoading(false)
-    }
+  const handleSend = (text: string) => {
+    if (!text.trim() || isLoading) return
+    sendMessage({ text: text.trim() })
+    setInputValue("")
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    sendMessage(input)
+    handleSend(inputValue)
   }
 
   return (
@@ -129,39 +114,43 @@ export function ChatWidget() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={cn("flex gap-2.5", msg.role === "user" ? "flex-row-reverse" : "")}
-              >
+            {messages.map((msg) => {
+              const text = getMessageText(msg)
+              if (!text) return null
+              return (
                 <div
-                  className={cn(
-                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
-                    msg.role === "assistant"
-                      ? "bg-[#627A93]/10 text-[#627A93]"
-                      : "bg-foreground/10 text-foreground"
-                  )}
+                  key={msg.id}
+                  className={cn("flex gap-2.5", msg.role === "user" ? "flex-row-reverse" : "")}
                 >
-                  {msg.role === "assistant" ? (
-                    <Bot className="h-3.5 w-3.5" />
-                  ) : (
-                    <User className="h-3.5 w-3.5" />
-                  )}
+                  <div
+                    className={cn(
+                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
+                      msg.role === "assistant"
+                        ? "bg-[#627A93]/10 text-[#627A93]"
+                        : "bg-foreground/10 text-foreground"
+                    )}
+                  >
+                    {msg.role === "assistant" ? (
+                      <Bot className="h-3.5 w-3.5" />
+                    ) : (
+                      <User className="h-3.5 w-3.5" />
+                    )}
+                  </div>
+                  <div
+                    className={cn(
+                      "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+                      msg.role === "assistant"
+                        ? "rounded-tl-md bg-card text-foreground border border-border"
+                        : "rounded-tr-md bg-[#627A93] text-white"
+                    )}
+                  >
+                    {text}
+                  </div>
                 </div>
-                <div
-                  className={cn(
-                    "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
-                    msg.role === "assistant"
-                      ? "rounded-tl-md bg-card text-foreground border border-border"
-                      : "rounded-tr-md bg-[#627A93] text-white"
-                  )}
-                >
-                  {msg.content}
-                </div>
-              </div>
-            ))}
+              )
+            })}
 
-            {loading && (
+            {status === "submitted" && (
               <div className="flex gap-2.5">
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#627A93]/10 text-[#627A93]">
                   <Bot className="h-3.5 w-3.5" />
@@ -176,14 +165,25 @@ export function ChatWidget() {
               </div>
             )}
 
+            {error && (
+              <div className="flex gap-2.5">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#627A93]/10 text-[#627A93]">
+                  <Bot className="h-3.5 w-3.5" />
+                </div>
+                <div className="max-w-[80%] rounded-2xl rounded-tl-md bg-card text-foreground border border-border px-4 py-2.5 text-sm leading-relaxed">
+                  Désolé, je ne parviens pas à me connecter. Contactez-nous directement au +33 7 58 74 56 23 ou par email à nze.claudia@yahoo.fr.
+                </div>
+              </div>
+            )}
+
             {/* Suggestions (show only at start) */}
-            {messages.length === 1 && !loading && (
+            {messages.length === 1 && !isLoading && (
               <div className="space-y-2 pt-2">
                 <p className="text-xs text-muted-foreground font-medium">Questions fréquentes :</p>
                 {SUGGESTIONS.map((s) => (
                   <button
                     key={s}
-                    onClick={() => sendMessage(s)}
+                    onClick={() => handleSend(s)}
                     className="block w-full rounded-xl border border-border bg-card px-3 py-2 text-left text-xs text-foreground transition-all hover:border-[#627A93]/30 hover:bg-[#627A93]/5"
                   >
                     {s}
@@ -203,19 +203,19 @@ export function ChatWidget() {
             <input
               ref={inputRef}
               type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               placeholder="Posez votre question..."
-              disabled={loading}
+              disabled={isLoading}
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
               maxLength={500}
             />
             <button
               type="submit"
-              disabled={!input.trim() || loading}
+              disabled={!inputValue.trim() || isLoading}
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-full transition-all",
-                input.trim() && !loading
+                inputValue.trim() && !isLoading
                   ? "bg-[#627A93] text-white hover:bg-[#39648F]"
                   : "text-muted-foreground/30"
               )}
