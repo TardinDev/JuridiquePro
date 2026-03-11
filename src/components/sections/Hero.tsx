@@ -408,7 +408,7 @@ export function Hero() {
                 <div className="mb-6 h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
                 <div className="space-y-3.5">
                   {[
-                    { icon: Mail, text: "nze.claudia@yahoo.fr" },
+                    { icon: Mail, text: "contact@projuridique.fr" },
                     { icon: MapPin, text: "Lyon & Nice" },
                   ].map(({ icon: Icon, text }) => (
                     <div key={text} className="flex items-center gap-3">

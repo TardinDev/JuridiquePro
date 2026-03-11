@@ -171,7 +171,7 @@ export function ChatWidget() {
                   <Bot className="h-3.5 w-3.5" />
                 </div>
                 <div className="max-w-[80%] rounded-2xl rounded-tl-md bg-card text-foreground border border-border px-4 py-2.5 text-sm leading-relaxed">
-                  Désolé, je ne parviens pas à me connecter. Contactez-nous directement au +33 7 58 74 56 23 ou par email à nze.claudia@yahoo.fr.
+                  Désolé, je ne parviens pas à me connecter. Contactez-nous directement au +33 7 58 74 56 23 ou par email à contact@projuridique.fr.
                 </div>
               </div>
             )}

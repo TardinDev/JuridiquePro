@@ -647,7 +647,7 @@ export const COMPANY = {
   siren: "999 885 171",
   siret: "999 885 171 00010",
   ape: "8211Z",
-  email: "nze.claudia@yahoo.fr",
+  email: "contact@projuridique.fr",
   phone: "+33 6 67 91 85 97",
   linkedin: "https://www.linkedin.com/in/clodia-oyane-nze-35b0681ba",
   instagram: "https://www.instagram.com/charlynoyane",
