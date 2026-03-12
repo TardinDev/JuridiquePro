@@ -97,7 +97,7 @@ export function Header() {
               "font-accent text-2xl font-bold leading-none tracking-tight transition-colors duration-300",
               useDarkText ? "text-foreground" : "text-white"
             )}>
-              Juridique <span className="text-royal">Pro</span>
+              <span className="text-royal">Pro</span> Juridique
             </span>
           </Link>
 

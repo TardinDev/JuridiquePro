@@ -18,7 +18,7 @@ export function Footer() {
                 className="h-12 w-auto"
               />
               <span className="font-accent text-2xl font-bold text-white">
-                Juridique <span className="text-royal">Pro</span>
+                <span className="text-royal">Pro</span> Juridique
               </span>
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-white/50">
