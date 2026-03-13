@@ -2,8 +2,8 @@
 // Sends transactional emails. If RESEND_API_KEY is not set, logs to console instead.
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM_EMAIL = process.env.FROM_EMAIL || "Juridique Pro <noreply@projuridique.com>"
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "nze.claudia@yahoo.fr"
+const FROM_EMAIL = process.env.FROM_EMAIL || "Juridique Pro <noreply@projuridique.fr>"
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "contact@projuridique.fr"
 
 interface EmailPayload {
     to: string
@@ -82,7 +82,7 @@ export async function sendContactConfirmation(data: {
                 <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0;" />
                 <p style="color: #888; font-size: 13px;">
                     Juridique Pro — Expert en formalités juridiques & création d'entreprises<br />
-                    <a href="https://projuridique.com" style="color: #627A93;">projuridique.com</a>
+                    <a href="https://projuridique.fr" style="color: #627A93;">projuridique.fr</a>
                 </p>
             </div>
         `,
@@ -107,14 +107,14 @@ export async function sendWelcomeEmail(data: {
                     <li>Suivre l'actualité juridique sur notre blog</li>
                 </ul>
                 <p>
-                    <a href="https://projuridique.com/temoignages" style="display: inline-block; padding: 12px 24px; background: #627A93; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                    <a href="https://projuridique.fr/temoignages" style="display: inline-block; padding: 12px 24px; background: #627A93; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
                         Laisser un témoignage
                     </a>
                 </p>
                 <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0;" />
                 <p style="color: #888; font-size: 13px;">
                     Juridique Pro — Expert en formalités juridiques & création d'entreprises<br />
-                    <a href="https://projuridique.com" style="color: #627A93;">projuridique.com</a>
+                    <a href="https://projuridique.fr" style="color: #627A93;">projuridique.fr</a>
                 </p>
             </div>
         `,
@@ -138,7 +138,7 @@ export async function sendTestimonialNotification(data: {
                     <p style="margin: 0; font-style: italic;">"${data.content}"</p>
                 </div>
                 <p>
-                    <a href="https://projuridique.com/admin" style="display: inline-block; padding: 12px 24px; background: #627A93; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                    <a href="https://projuridique.fr/admin" style="display: inline-block; padding: 12px 24px; background: #627A93; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
                         Modérer sur le dashboard
                     </a>
                 </p>
