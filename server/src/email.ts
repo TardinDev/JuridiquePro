@@ -2,7 +2,7 @@
 // Sends transactional emails. If RESEND_API_KEY is not set, logs to console instead.
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM_EMAIL = process.env.FROM_EMAIL || "Juridique Pro <noreply@projuridique.fr>"
+const FROM_EMAIL = process.env.FROM_EMAIL || "Juridique Pro <noreply@projuridique.com>"
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "contact@projuridique.fr"
 
 interface EmailPayload {

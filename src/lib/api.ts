@@ -36,6 +36,11 @@ async function apiFetch<T>(
         headers,
     })
 
+    const contentType = res.headers.get("content-type") || ""
+    if (!contentType.includes("application/json")) {
+        throw new Error("Le serveur est temporairement indisponible. Veuillez réessayer.")
+    }
+
     const data = await res.json()
 
     if (!res.ok) {

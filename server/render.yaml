@@ -22,3 +22,9 @@ services:
         generateValue: true
       - key: FRONTEND_URL
         value: https://projuridique.com
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: "Juridique Pro <noreply@projuridique.com>"
+      - key: ADMIN_EMAIL
+        value: contact@projuridique.fr
