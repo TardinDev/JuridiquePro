@@ -126,7 +126,7 @@ export function Footer() {
                 </svg>
               </a>
 
-              <a href="https://wa.me/33758745623"
+              <a href="https://wa.me/33667918597"
                 target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-3 group/wa">
                 <div className="flex h-7 w-7 items-center justify-center rounded-md bg-royal/[0.08]">
