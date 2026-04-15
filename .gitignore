@@ -26,6 +26,7 @@ server/data/
 
 # Server build output
 server/dist/
+*.tsbuildinfo
 
 # Editor directories and files
 .vscode/*
