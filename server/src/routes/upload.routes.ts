@@ -1,15 +1,24 @@
 import { Router, type Request, type Response } from "express"
 import multer, { type FileFilterCallback } from "multer"
 import path from "path"
+import { fileURLToPath } from "url"
+import fs from "fs"
 import crypto from "crypto"
 import { authenticateToken, requireAdmin } from "../auth.js"
 
 const router = Router()
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const uploadsDir = path.resolve(__dirname, "../../uploads")
+
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true })
+}
 
 // Storage configuration
 const storage = multer.diskStorage({
     destination(_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) {
-        cb(null, path.resolve(import.meta.dirname, "../../uploads"))
+        cb(null, uploadsDir)
     },
     filename(_req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) {
         const ext = path.extname(file.originalname).toLowerCase()

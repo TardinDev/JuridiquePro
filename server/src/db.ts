@@ -91,7 +91,7 @@ const PG_SCHEMA = `
     link_text TEXT DEFAULT 'En savoir plus',
     position TEXT NOT NULL DEFAULT 'after-services' CHECK(position IN ('after-hero','after-services','after-stats','after-testimonials')),
     display_order INTEGER NOT NULL DEFAULT 0,
-    active BOOLEAN NOT NULL DEFAULT true,
+    active INTEGER NOT NULL DEFAULT 1,
     created_at TIMESTAMPTZ DEFAULT NOW()
   );
 `

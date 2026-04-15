@@ -4,6 +4,7 @@ dotenv.config()
 import express from "express"
 import cors from "cors"
 import path from "path"
+import { fileURLToPath } from "url"
 import { initializeDatabase } from "./db.js"
 import authRoutes from "./routes/auth.routes.js"
 import testimonialRoutes from "./routes/testimonials.routes.js"
@@ -40,7 +41,8 @@ app.use(
 app.use(express.json())
 
 // ── Serve uploaded files ─────────────────────────────────────────
-const uploadsDir = path.resolve(import.meta.dirname, "../uploads")
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const uploadsDir = path.resolve(__dirname, "../uploads")
 app.use("/uploads", express.static(uploadsDir))
 
 // ── Routes ──────────────────────────────────────────────────────
