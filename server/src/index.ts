@@ -3,6 +3,7 @@ dotenv.config()
 
 import express from "express"
 import cors from "cors"
+import path from "path"
 import { initializeDatabase } from "./db.js"
 import authRoutes from "./routes/auth.routes.js"
 import testimonialRoutes from "./routes/testimonials.routes.js"
@@ -10,6 +11,8 @@ import contactRoutes from "./routes/contact.routes.js"
 import blogRoutes from "./routes/blog.routes.js"
 import adminRoutes from "./routes/admin.routes.js"
 import chatRoutes from "./routes/chat.routes.js"
+import uploadRoutes from "./routes/upload.routes.js"
+import contentRoutes from "./routes/content.routes.js"
 
 const app = express()
 const PORT = parseInt(process.env.PORT || "3001", 10)
@@ -36,6 +39,10 @@ app.use(
 )
 app.use(express.json())
 
+// ── Serve uploaded files ─────────────────────────────────────────
+const uploadsDir = path.resolve(import.meta.dirname, "../uploads")
+app.use("/uploads", express.static(uploadsDir))
+
 // ── Routes ──────────────────────────────────────────────────────
 app.use("/api/auth", authRoutes)
 app.use("/api/testimonials", testimonialRoutes)
@@ -43,6 +50,8 @@ app.use("/api/contact", contactRoutes)
 app.use("/api/blog", blogRoutes)
 app.use("/api/admin", adminRoutes)
 app.use("/api/chat", chatRoutes)
+app.use("/api/upload", uploadRoutes)
+app.use("/api/content", contentRoutes)
 
 // ── Health check ────────────────────────────────────────────────
 app.get("/api/health", (_req, res) => {

@@ -268,3 +268,151 @@ export async function apiUpdateBlogPost(
 export async function apiDeleteBlogPost(id: number): Promise<void> {
     await apiFetch(`/blog/${id}`, { method: "DELETE" })
 }
+
+// ── Contact Delete ─────────────────────────────────────────────
+
+export async function apiDeleteContact(id: number): Promise<void> {
+    await apiFetch(`/contact/${id}`, { method: "DELETE" })
+}
+
+// ── Recent Activity ────────────────────────────────────────────
+
+export interface RecentActivity {
+    recentMessages: Array<{
+        id: number
+        name: string
+        subject: string
+        status: string
+        created_at: string
+    }>
+    recentTestimonials: Array<{
+        id: number
+        name: string
+        content: string
+        rating: number
+        status: string
+        created_at: string
+    }>
+}
+
+export async function apiGetRecentActivity(): Promise<RecentActivity> {
+    return apiFetch<RecentActivity>("/admin/recent-activity")
+}
+
+// ── User Management ────────────────────────────────────────────
+
+export interface ApiUser {
+    id: number
+    full_name: string
+    email: string
+    role: string
+    created_at: string
+}
+
+export async function apiGetAdminUsers(): Promise<ApiUser[]> {
+    const data = await apiFetch<{ users: ApiUser[] }>("/admin/users")
+    return data.users
+}
+
+export async function apiUpdateUserRole(
+    id: number,
+    role: "user" | "admin"
+): Promise<void> {
+    await apiFetch(`/admin/users/${id}/role`, {
+        method: "PATCH",
+        body: JSON.stringify({ role }),
+    })
+}
+
+export async function apiDeleteUser(id: number): Promise<void> {
+    await apiFetch(`/admin/users/${id}`, { method: "DELETE" })
+}
+
+// ── Image Upload ───────────────────────────────────────────────
+
+export async function apiUploadImage(file: File): Promise<string> {
+    const token = localStorage.getItem("jp_token")
+    const formData = new FormData()
+    formData.append("image", file)
+
+    const res = await fetch(`${API_BASE}/upload`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+    })
+
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || "Erreur lors de l'upload")
+    return data.url as string
+}
+
+// ── Homepage Content ───────────────────────────────────────────
+
+export interface HomepageContentItem {
+    id: number
+    type: "announcement" | "promotion" | "partner_ad"
+    title: string
+    description: string | null
+    image_url: string | null
+    link_url: string | null
+    link_text: string | null
+    position: string
+    display_order: number
+    active: number | boolean
+    created_at: string
+}
+
+export async function apiGetHomepageContent(): Promise<Record<string, HomepageContentItem[]>> {
+    const data = await apiFetch<{ content: Record<string, HomepageContentItem[]> }>("/content")
+    return data.content
+}
+
+export async function apiGetAdminContent(): Promise<HomepageContentItem[]> {
+    const data = await apiFetch<{ content: HomepageContentItem[] }>("/content/admin")
+    return data.content
+}
+
+export async function apiCreateContent(content: {
+    type: string
+    title: string
+    description?: string
+    image_url?: string
+    link_url?: string
+    link_text?: string
+    position: string
+    display_order?: number
+    active?: boolean
+}): Promise<{ id: number }> {
+    return apiFetch("/content/admin", {
+        method: "POST",
+        body: JSON.stringify(content),
+    })
+}
+
+export async function apiUpdateContent(
+    id: number,
+    content: {
+        type: string
+        title: string
+        description?: string
+        image_url?: string
+        link_url?: string
+        link_text?: string
+        position: string
+        display_order?: number
+        active?: boolean
+    }
+): Promise<void> {
+    await apiFetch(`/content/admin/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(content),
+    })
+}
+
+export async function apiToggleContent(id: number): Promise<{ active: boolean }> {
+    return apiFetch(`/content/admin/${id}/toggle`, { method: "PATCH" })
+}
+
+export async function apiDeleteContent(id: number): Promise<void> {
+    await apiFetch(`/content/admin/${id}`, { method: "DELETE" })
+}

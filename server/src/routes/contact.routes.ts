@@ -100,4 +100,24 @@ router.patch("/:id", authenticateToken, requireAdmin, async (req, res) => {
     }
 })
 
+// ── DELETE /api/contact/:id (admin) ──────────────────────────
+router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const existing = await dbGet<{ id: number }>(
+            "SELECT id FROM contact_messages WHERE id = ?",
+            [req.params.id]
+        )
+        if (!existing) {
+            res.status(404).json({ error: "Message non trouvé" })
+            return
+        }
+
+        await dbRun("DELETE FROM contact_messages WHERE id = ?", [req.params.id])
+        res.json({ message: "Message supprimé" })
+    } catch (error) {
+        console.error("Delete contact error:", error)
+        res.status(500).json({ error: "Erreur serveur" })
+    }
+})
+
 export default router

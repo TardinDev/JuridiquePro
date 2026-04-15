@@ -5,6 +5,7 @@ import { Stats } from "@/components/sections/Stats"
 import { Testimonials } from "@/components/sections/Testimonials"
 import { FAQ } from "@/components/sections/FAQ"
 import { CTA } from "@/components/sections/CTA"
+import { HomepageContent } from "@/components/sections/HomepageContent"
 import { useSEO } from "@/hooks/useSEO"
 
 export default function Home() {
@@ -17,10 +18,14 @@ export default function Home() {
   return (
     <div className="relative">
       <Hero />
+      <HomepageContent position="after-hero" />
       <Services />
+      <HomepageContent position="after-services" />
       <WhyUs />
       <Stats />
+      <HomepageContent position="after-stats" />
       <Testimonials />
+      <HomepageContent position="after-testimonials" />
       <FAQ />
       <CTA />
     </div>

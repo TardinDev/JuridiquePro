@@ -80,6 +80,20 @@ const PG_SCHEMA = `
     published_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW()
   );
+
+  CREATE TABLE IF NOT EXISTS homepage_content (
+    id SERIAL PRIMARY KEY,
+    type TEXT NOT NULL CHECK(type IN ('announcement','promotion','partner_ad')),
+    title TEXT NOT NULL,
+    description TEXT,
+    image_url TEXT,
+    link_url TEXT,
+    link_text TEXT DEFAULT 'En savoir plus',
+    position TEXT NOT NULL DEFAULT 'after-services' CHECK(position IN ('after-hero','after-services','after-stats','after-testimonials')),
+    display_order INTEGER NOT NULL DEFAULT 0,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
 `
 
 const SQLITE_SCHEMA = `
@@ -126,6 +140,20 @@ const SQLITE_SCHEMA = `
     author_id INTEGER REFERENCES users(id),
     author_name TEXT NOT NULL DEFAULT 'Juridique Pro',
     published_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS homepage_content (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL CHECK(type IN ('announcement','promotion','partner_ad')),
+    title TEXT NOT NULL,
+    description TEXT,
+    image_url TEXT,
+    link_url TEXT,
+    link_text TEXT DEFAULT 'En savoir plus',
+    position TEXT NOT NULL DEFAULT 'after-services' CHECK(position IN ('after-hero','after-services','after-stats','after-testimonials')),
+    display_order INTEGER NOT NULL DEFAULT 0,
+    active INTEGER NOT NULL DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `

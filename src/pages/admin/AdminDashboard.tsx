@@ -1,31 +1,34 @@
 import { useEffect, useState } from "react"
-import { Link, Navigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
-import { useAuthStore } from "@/store/useAuthStore"
 import { apiGetAdminStats, type AdminStats } from "@/lib/api"
+import { apiGetRecentActivity, type RecentActivity } from "@/lib/api"
 import { useSEO } from "@/hooks/useSEO"
-import { MessageSquare, Star, FileText, Users } from "lucide-react"
+import { StatCardSkeleton, ListRowSkeleton } from "@/components/admin/AdminSkeleton"
+import { MessageSquare, Star, FileText, Users, ArrowRight, Mail, Clock } from "lucide-react"
 
 export default function AdminDashboard() {
   useSEO({ title: "Administration" })
-  const user = useAuthStore((s) => s.user)
   const [stats, setStats] = useState<AdminStats | null>(null)
+  const [activity, setActivity] = useState<RecentActivity | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    apiGetAdminStats()
-      .then(setStats)
+    Promise.all([
+      apiGetAdminStats(),
+      apiGetRecentActivity(),
+    ])
+      .then(([s, a]) => {
+        setStats(s)
+        setActivity(a)
+      })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
 
-  if (!user || user.role !== "admin") {
-    return <Navigate to="/" replace />
-  }
-
   const cards = [
     {
-      label: "Témoignages en attente",
+      label: "Temoignages en attente",
       value: stats?.pendingTestimonials ?? 0,
       icon: Star,
       href: "/admin/temoignages",
@@ -49,85 +52,183 @@ export default function AdminDashboard() {
       label: "Utilisateurs inscrits",
       value: stats?.totalUsers ?? 0,
       icon: Users,
-      href: "/admin",
+      href: "/admin/utilisateurs",
       color: "text-purple-500 bg-purple-500/10",
     },
   ]
 
   return (
-    <>
-      <section className="relative overflow-hidden pt-32 pb-20">
-        <div className="absolute inset-0 mesh-gradient opacity-60" />
-        <div className="noise absolute inset-0" />
-        <div className="container-custom relative z-10 text-center">
-          <Badge variant="secondary" className="mb-6 border-border bg-card text-muted-foreground">
-            Administration
-          </Badge>
-          <h1 className="font-heading text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-            Dashboard
-          </h1>
+    <div className="space-y-8">
+      {/* Page title */}
+      <div>
+        <h1 className="font-heading text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Vue d'ensemble de votre activite
+        </p>
+      </div>
+
+      {/* Stats grid */}
+      {loading ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <StatCardSkeleton key={i} />
+          ))}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
-      </section>
-
-      <section className="section-padding bg-background">
-        <div className="container-custom">
-          {loading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 animate-pulse rounded-2xl bg-card border border-border" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {cards.map((card) => (
-                <Link
-                  key={card.label}
-                  to={card.href}
-                  className="group rounded-2xl border border-border bg-card p-6 transition-all hover:border-royal/20 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${card.color}`}>
-                      <card.icon className="h-5 w-5" />
-                    </div>
-                    <span className="text-3xl font-bold text-foreground">{card.value}</span>
-                  </div>
-                  <p className="mt-4 text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                    {card.label}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {cards.map((card) => (
             <Link
-              to="/admin/temoignages"
-              className="rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-royal/20 hover:shadow-md"
+              key={card.label}
+              to={card.href}
+              className="group rounded-2xl border border-border bg-card p-6 transition-all hover:border-royal/20 hover:shadow-lg"
             >
-              <Star className="mx-auto mb-3 h-8 w-8 text-royal" />
-              <h3 className="font-heading font-bold text-foreground">Témoignages</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Modérer les témoignages</p>
+              <div className="flex items-center justify-between">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${card.color}`}>
+                  <card.icon className="h-5 w-5" />
+                </div>
+                <span className="text-3xl font-bold text-foreground">{card.value}</span>
+              </div>
+              <p className="mt-4 text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                {card.label}
+              </p>
             </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Recent activity */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Recent messages */}
+        <div className="rounded-2xl border border-border bg-card">
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <h2 className="font-heading text-base font-bold text-foreground">
+              Derniers messages
+            </h2>
             <Link
               to="/admin/messages"
-              className="rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-royal/20 hover:shadow-md"
+              className="flex items-center gap-1 text-xs font-medium text-royal hover:text-royal-dark transition-colors"
             >
-              <MessageSquare className="mx-auto mb-3 h-8 w-8 text-royal" />
-              <h3 className="font-heading font-bold text-foreground">Messages</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Voir les messages de contact</p>
-            </Link>
-            <Link
-              to="/admin/blog"
-              className="rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-royal/20 hover:shadow-md"
-            >
-              <FileText className="mx-auto mb-3 h-8 w-8 text-royal" />
-              <h3 className="font-heading font-bold text-foreground">Blog</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Gérer les articles</p>
+              Voir tout <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
+          <div className="divide-y divide-border">
+            {loading ? (
+              <div className="space-y-0 p-4">
+                {[...Array(3)].map((_, i) => (
+                  <ListRowSkeleton key={i} />
+                ))}
+              </div>
+            ) : activity?.recentMessages.length === 0 ? (
+              <div className="p-8 text-center">
+                <Mail className="mx-auto mb-2 h-6 w-6 text-muted-foreground/50" />
+                <p className="text-sm text-muted-foreground">Aucun message</p>
+              </div>
+            ) : (
+              activity?.recentMessages.map((msg) => (
+                <div key={msg.id} className="flex items-start gap-3 px-6 py-3">
+                  <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                    msg.status === "unread" ? "bg-royal/10 text-royal" : "bg-muted text-muted-foreground"
+                  }`}>
+                    <MessageSquare className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground truncate">{msg.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{msg.subject}</p>
+                  </div>
+                  <span className="flex shrink-0 items-center gap-1 text-[10px] text-muted-foreground/60">
+                    <Clock className="h-3 w-3" />
+                    {new Date(msg.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      </section>
-    </>
+
+        {/* Recent testimonials */}
+        <div className="rounded-2xl border border-border bg-card">
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <h2 className="font-heading text-base font-bold text-foreground">
+              Derniers temoignages
+            </h2>
+            <Link
+              to="/admin/temoignages"
+              className="flex items-center gap-1 text-xs font-medium text-royal hover:text-royal-dark transition-colors"
+            >
+              Voir tout <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+          <div className="divide-y divide-border">
+            {loading ? (
+              <div className="space-y-0 p-4">
+                {[...Array(3)].map((_, i) => (
+                  <ListRowSkeleton key={i} />
+                ))}
+              </div>
+            ) : activity?.recentTestimonials.length === 0 ? (
+              <div className="p-8 text-center">
+                <Star className="mx-auto mb-2 h-6 w-6 text-muted-foreground/50" />
+                <p className="text-sm text-muted-foreground">Aucun temoignage</p>
+              </div>
+            ) : (
+              activity?.recentTestimonials.map((t) => (
+                <div key={t.id} className="flex items-start gap-3 px-6 py-3">
+                  <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                    t.status === "pending" ? "bg-amber-500/10 text-amber-500" :
+                    t.status === "approved" ? "bg-green-500/10 text-green-500" :
+                    "bg-red-500/10 text-red-500"
+                  }`}>
+                    <Star className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-foreground truncate">{t.name}</p>
+                      <Badge className={`text-[10px] ${
+                        t.status === "pending" ? "bg-amber-500/10 text-amber-600 border-amber-200" :
+                        t.status === "approved" ? "bg-green-500/10 text-green-600 border-green-200" :
+                        "bg-red-500/10 text-red-600 border-red-200"
+                      }`}>
+                        {t.status === "pending" ? "En attente" : t.status === "approved" ? "Approuve" : "Rejete"}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {"★".repeat(t.rating)}{"☆".repeat(5 - t.rating)} — {t.content.slice(0, 60)}...
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick actions */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Link
+          to="/admin/temoignages"
+          className="rounded-2xl border border-border bg-card p-5 text-center transition-all hover:border-royal/20 hover:shadow-md"
+        >
+          <Star className="mx-auto mb-2 h-7 w-7 text-royal" />
+          <h3 className="font-heading text-sm font-bold text-foreground">Temoignages</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Moderer les temoignages</p>
+        </Link>
+        <Link
+          to="/admin/messages"
+          className="rounded-2xl border border-border bg-card p-5 text-center transition-all hover:border-royal/20 hover:shadow-md"
+        >
+          <MessageSquare className="mx-auto mb-2 h-7 w-7 text-royal" />
+          <h3 className="font-heading text-sm font-bold text-foreground">Messages</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Voir les messages de contact</p>
+        </Link>
+        <Link
+          to="/admin/blog"
+          className="rounded-2xl border border-border bg-card p-5 text-center transition-all hover:border-royal/20 hover:shadow-md"
+        >
+          <FileText className="mx-auto mb-2 h-7 w-7 text-royal" />
+          <h3 className="font-heading text-sm font-bold text-foreground">Blog</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Gerer les articles</p>
+        </Link>
+      </div>
+    </div>
   )
 }

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -26,6 +26,7 @@ export default function LoginPage() {
     })
 
     const navigate = useNavigate()
+    const location = useLocation()
     const login = useAuthStore((s) => s.login)
     const [serverError, setServerError] = useState("")
 
@@ -42,7 +43,21 @@ export default function LoginPage() {
             setServerError("")
             await login(data.email, data.password)
             toast.success("Connexion réussie !")
-            navigate("/temoignages")
+
+            // Redirect back to admin if coming from AdminRoute
+            const from = (location.state as { from?: { pathname: string } })?.from?.pathname
+            if (from?.startsWith("/admin")) {
+                navigate(from)
+                return
+            }
+
+            // Admin users go to admin dashboard
+            const currentUser = useAuthStore.getState().user
+            if (currentUser?.role === "admin") {
+                navigate("/admin")
+            } else {
+                navigate("/temoignages")
+            }
         } catch (error) {
             const msg = error instanceof Error ? error.message : "Erreur de connexion"
             setServerError(msg)

@@ -15,11 +15,21 @@ const RegisterPage = lazy(() => import("@/pages/RegisterPage"))
 const TestimonialsPage = lazy(() => import("@/pages/TestimonialsPage"))
 const MentionsLegales = lazy(() => import("@/pages/MentionsLegales"))
 const PolitiqueConfidentialite = lazy(() => import("@/pages/PolitiqueConfidentialite"))
+const NotFound = lazy(() => import("@/pages/NotFound"))
+
+// Admin (lazy-loaded with named exports)
+const AdminLayoutLazy = lazy(() =>
+  import("@/components/admin/AdminLayout").then((m) => ({ default: m.AdminLayout }))
+)
+const AdminRouteLazy = lazy(() =>
+  import("@/components/admin/AdminRoute").then((m) => ({ default: m.AdminRoute }))
+)
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"))
 const AdminTestimonials = lazy(() => import("@/pages/admin/AdminTestimonials"))
 const AdminMessages = lazy(() => import("@/pages/admin/AdminMessages"))
 const AdminBlog = lazy(() => import("@/pages/admin/AdminBlog"))
-const NotFound = lazy(() => import("@/pages/NotFound"))
+const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"))
+const AdminContent = lazy(() => import("@/pages/admin/AdminContent"))
 
 function LoadingFallback() {
   return (
@@ -39,12 +49,21 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+function AdminGuard() {
+  return (
+    <AdminRouteLazy>
+      <AdminLayoutLazy />
+    </AdminRouteLazy>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthInitializer>
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
+            {/* Public site routes */}
             <Route element={<PageLayout />}>
               <Route index element={<Home />} />
               <Route path="services" element={<ServicesPage />} />
@@ -58,11 +77,17 @@ export default function App() {
               <Route path="inscription" element={<RegisterPage />} />
               <Route path="mentions-legales" element={<MentionsLegales />} />
               <Route path="politique-de-confidentialite" element={<PolitiqueConfidentialite />} />
-              <Route path="admin" element={<AdminDashboard />} />
-              <Route path="admin/temoignages" element={<AdminTestimonials />} />
-              <Route path="admin/messages" element={<AdminMessages />} />
-              <Route path="admin/blog" element={<AdminBlog />} />
               <Route path="*" element={<NotFound />} />
+            </Route>
+
+            {/* Admin routes — dedicated layout */}
+            <Route path="admin" element={<AdminGuard />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="temoignages" element={<AdminTestimonials />} />
+              <Route path="messages" element={<AdminMessages />} />
+              <Route path="blog" element={<AdminBlog />} />
+              <Route path="utilisateurs" element={<AdminUsers />} />
+              <Route path="contenu" element={<AdminContent />} />
             </Route>
           </Routes>
         </Suspense>
