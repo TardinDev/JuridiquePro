@@ -30,6 +30,7 @@ const AdminMessages = lazy(() => import("@/pages/admin/AdminMessages"))
 const AdminBlog = lazy(() => import("@/pages/admin/AdminBlog"))
 const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"))
 const AdminContent = lazy(() => import("@/pages/admin/AdminContent"))
+const AdminBackup = lazy(() => import("@/pages/admin/AdminBackup"))
 
 function LoadingFallback() {
   return (
@@ -88,6 +89,7 @@ export default function App() {
               <Route path="blog" element={<AdminBlog />} />
               <Route path="utilisateurs" element={<AdminUsers />} />
               <Route path="contenu" element={<AdminContent />} />
+              <Route path="sauvegardes" element={<AdminBackup />} />
             </Route>
           </Routes>
         </Suspense>

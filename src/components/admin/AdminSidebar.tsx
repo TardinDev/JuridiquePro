@@ -8,6 +8,7 @@ import {
   FileText,
   Users,
   Image,
+  Database,
   PanelLeftClose,
   PanelLeft,
   ExternalLink,
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { label: "Messages", icon: MessageSquare, path: "/admin/messages", badgeKey: "unreadMessages" as const },
   { label: "Blog", icon: FileText, path: "/admin/blog", badgeKey: null },
   { label: "Utilisateurs", icon: Users, path: "/admin/utilisateurs", badgeKey: null },
+  { label: "Sauvegardes", icon: Database, path: "/admin/sauvegardes", badgeKey: null },
 ]
 
 interface AdminSidebarProps {

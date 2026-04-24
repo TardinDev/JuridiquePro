@@ -28,3 +28,9 @@ services:
         value: "Juridique Pro <noreply@projuridique.com>"
       - key: ADMIN_EMAIL
         value: contact@projuridique.fr
+      - key: ADMIN_SEED_EMAIL
+        sync: false
+      - key: ADMIN_SEED_PASSWORD
+        sync: false
+      - key: ADMIN_SEED_NAME
+        sync: false

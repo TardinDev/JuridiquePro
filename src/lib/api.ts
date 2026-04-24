@@ -416,3 +416,52 @@ export async function apiToggleContent(id: number): Promise<{ active: boolean }>
 export async function apiDeleteContent(id: number): Promise<void> {
     await apiFetch(`/content/admin/${id}`, { method: "DELETE" })
 }
+
+// ── Backup API ──────────────────────────────────────────────
+
+export interface BackupSummary {
+    counts: {
+        users: number
+        testimonials: number
+        contact_messages: number
+        blog_posts: number
+        homepage_content: number
+    }
+}
+
+export async function apiGetBackupSummary(): Promise<BackupSummary> {
+    return apiFetch("/backup/summary")
+}
+
+export async function apiDownloadBackup(): Promise<void> {
+    const token = getToken()
+    const res = await fetch(`${API_BASE}/backup/export`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    if (!res.ok) {
+        throw new Error("Échec de l'export du backup")
+    }
+    const blob = await res.blob()
+    const disposition = res.headers.get("content-disposition") || ""
+    const match = disposition.match(/filename="?([^"]+)"?/)
+    const filename = match?.[1] || `juridiquepro-backup-${new Date().toISOString().slice(0, 10)}.json`
+
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+}
+
+export async function apiRestoreBackup(
+    payload: unknown,
+    replace: boolean
+): Promise<{ inserted: Record<string, number>; skipped: Record<string, number>; message: string }> {
+    return apiFetch("/backup/import", {
+        method: "POST",
+        body: JSON.stringify({ payload, replace }),
+    })
+}

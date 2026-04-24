@@ -6,6 +6,7 @@ import cors from "cors"
 import path from "path"
 import { fileURLToPath } from "url"
 import { initializeDatabase } from "./db.js"
+import { runSeed } from "./seed.js"
 import authRoutes from "./routes/auth.routes.js"
 import testimonialRoutes from "./routes/testimonials.routes.js"
 import contactRoutes from "./routes/contact.routes.js"
@@ -14,6 +15,7 @@ import adminRoutes from "./routes/admin.routes.js"
 import chatRoutes from "./routes/chat.routes.js"
 import uploadRoutes from "./routes/upload.routes.js"
 import contentRoutes from "./routes/content.routes.js"
+import backupRoutes from "./routes/backup.routes.js"
 
 const app = express()
 const PORT = parseInt(process.env.PORT || "3001", 10)
@@ -51,6 +53,7 @@ app.use("/api/testimonials", testimonialRoutes)
 app.use("/api/contact", contactRoutes)
 app.use("/api/blog", blogRoutes)
 app.use("/api/admin", adminRoutes)
+app.use("/api/backup", backupRoutes)
 app.use("/api/chat", chatRoutes)
 app.use("/api/upload", uploadRoutes)
 app.use("/api/content", contentRoutes)
@@ -64,6 +67,7 @@ app.get("/api/health", (_req, res) => {
 async function start() {
     try {
         await initializeDatabase()
+        await runSeed()
         app.listen(PORT, () => {
             console.log(`Server running on http://localhost:${PORT}`)
             console.log(
