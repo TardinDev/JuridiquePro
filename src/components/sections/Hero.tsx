@@ -248,8 +248,8 @@ export function Hero() {
       </section>
 
       
-      {/* 3 THÈMES — Ce que nous faisons              */}
-      
+      {/* 3 THÈMES — Ce que nous faisons */}
+    
       <section ref={themesRef} className="relative z-10">
         <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
           <div className="flex flex-col lg:flex-row lg:gap-16 xl:gap-24">
@@ -418,7 +418,7 @@ export function Hero() {
                       <span className="text-sm text-white/60">{text}</span>
                     </div>
                   ))}
-                  <a href="https://wa.me/33667918597"
+                  <a href="https://wa.me/33758745623"
                     target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-3 group/wa">
                     <div className="flex h-7 w-7 items-center justify-center rounded-md bg-royal/[0.08]">
